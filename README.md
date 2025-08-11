@@ -113,7 +113,7 @@ child: ChartWidget(
           count: 7,
           max: 30,
           zoom:true,
-          formatter: (index) {
+          formatter: (index, value) {
             return startTime.add(Duration(days: index)).toStringWithFormat(format: 'dd');
           },
         ),
@@ -164,7 +164,7 @@ child: ChartWidget(
           max: 20,
           zoom:true,
           drawLine: false,
-          formatter: (index) => startTime.add(Duration(days: index)).toStringWithFormat(format: 'dd'),
+          formatter: (index, value) => startTime.add(Duration(days: index)).toStringWithFormat(format: 'dd'),
         ),
         charts: [
           Bar(

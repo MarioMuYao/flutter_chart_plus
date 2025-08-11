@@ -78,13 +78,13 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                         count: 7,
                         max: 7,
                         drawDivider: true,
-                        formatter: (index) =>
+                        formatter: (index, value) =>
                             startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                       ),
                       charts: [
                         Bar(
                           data: dataList,
-                          position: (item,_) => parserDateTimeToDayValue(item['time'] as DateTime, startTime),
+                          position: (item, _) => parserDateTimeToDayValue(item['time'] as DateTime, startTime),
                           valueFormatter: (item) => item['value1'].toString(),
                           value: (item) => item['value1'],
                         ),
@@ -106,7 +106,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                         count: 7,
                         max: 30,
                         zoom: true,
-                        formatter: (index) {
+                        formatter: (index, value) {
                           return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd');
                         },
                       ),
@@ -116,7 +116,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                           direction: Axis.vertical,
                           itemWidth: 10,
                           highlightColor: Colors.yellow,
-                          position: (item,_) {
+                          position: (item, _) {
                             return parserDateTimeToDayValue(item['time'] as DateTime, startTime);
                           },
                           valuesFormatter: (item) =>
@@ -141,7 +141,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                       xAxis: XAxis(
                         count: 7,
                         max: 30,
-                        formatter: (index) {
+                        formatter: (index, value) {
                           return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd');
                         },
                       ),
@@ -153,7 +153,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                           full: true,
                           highlightColor: Colors.yellow,
                           drawValueTextAfterAnimation: false,
-                          position: (item,_) {
+                          position: (item, _) {
                             return parserDateTimeToDayValue(item['time'] as DateTime, startTime);
                           },
                           valuesFormatter: (item) =>
@@ -179,14 +179,14 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                       xAxis: XAxis(
                         count: 7,
                         max: 30,
-                        formatter: (index) {
+                        formatter: (index, value) {
                           return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd');
                         },
                       ),
                       charts: [
                         StackBar(
                           data: dataList,
-                          position: (item,_) {
+                          position: (item, _) {
                             return parserDateTimeToDayValue(item['time'] as DateTime, startTime);
                           },
                           direction: Axis.horizontal,
@@ -214,7 +214,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                       xAxis: XAxis(
                         count: 7,
                         max: 30,
-                        formatter: (index) {
+                        formatter: (index, value) {
                           return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd');
                         },
                       ),
@@ -222,7 +222,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                         StackBar(
                           hotColor: Colors.yellow.withOpacity(0.1),
                           data: dataList,
-                          position: (item,_) {
+                          position: (item, _) {
                             return parserDateTimeToDayValue(item['time'] as DateTime, startTime);
                           },
                           direction: Axis.horizontal,
@@ -249,13 +249,13 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                       xAxis: XAxis(
                         count: 7,
                         drawDivider: true,
-                        formatter: (index) =>
+                        formatter: (index, value) =>
                             startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                       ),
                       charts: [
                         Bar(
                           data: dataList,
-                          position: (item,_) => parserDateTimeToDayValue(item['time'] as DateTime, startTime),
+                          position: (item, _) => parserDateTimeToDayValue(item['time'] as DateTime, startTime),
                           valueFormatter: (item) => item['value1'].toString(),
                           value: (item) => item['value1'],
                         ),
@@ -275,7 +275,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                         zoom: true,
                         drawDivider: true,
                         drawGrid: true,
-                        formatter: (index) {
+                        formatter: (index, value) {
                           return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd');
                         },
                       ),
@@ -285,7 +285,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                           direction: Axis.vertical,
                           itemWidth: 20,
                           highlightColor: Colors.yellow,
-                          position: (item,_) {
+                          position: (item, _) {
                             return parserDateTimeToDayValue(item['time'] as DateTime, startTime);
                           },
                           valuesFormatter: (item) =>
@@ -312,7 +312,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                         count: 7,
                         drawDivider: true,
                         drawGrid: true,
-                        formatter: (index) {
+                        formatter: (index, value) {
                           return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd');
                         },
                       ),
@@ -320,7 +320,7 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                         StackBar(
                           hotColor: Colors.yellow.withOpacity(0.1),
                           data: dataList,
-                          position: (item,_) {
+                          position: (item, _) {
                             return parserDateTimeToDayValue(item['time'] as DateTime, startTime);
                           },
                           direction: Axis.horizontal,

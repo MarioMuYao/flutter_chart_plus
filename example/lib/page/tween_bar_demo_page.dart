@@ -111,7 +111,7 @@ class _TweenBarChartDemoPageState extends State<TweenBarChartDemoPage> {
                       xAxis: XAxis(
                         count: 9,
                         zoom: true,
-                        formatter: (index) =>
+                        formatter: (index, value) =>
                             startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                       ),
                       charts: [
@@ -140,7 +140,7 @@ class _TweenBarChartDemoPageState extends State<TweenBarChartDemoPage> {
                       xAxis: XAxis(
                         count: 7,
                         max: 10,
-                        formatter: (index) =>
+                        formatter: (index, value) =>
                             startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                       ),
                       charts: [
@@ -163,7 +163,7 @@ class _TweenBarChartDemoPageState extends State<TweenBarChartDemoPage> {
                       xAxis: XAxis(
                         count: 7,
                         max: 30,
-                        formatter: (index) {
+                        formatter: (index, value) {
                           return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd');
                         },
                       ),

@@ -1,6 +1,6 @@
 part of flutter_chart_plus;
 
-typedef AxisFormatter = String? Function(num);
+typedef AxisFormatter = String? Function(int index, num value);
 typedef AxisOffset = Offset? Function(Size size);
 
 ///放大时的数据

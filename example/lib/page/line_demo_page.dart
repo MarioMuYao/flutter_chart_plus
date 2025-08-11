@@ -108,7 +108,7 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                         padding: 20,
                         count: 9,
                         zoom: true,
-                        formatter: (index) =>
+                        formatter: (index, value) =>
                             startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                       ),
                       charts: [
@@ -184,7 +184,7 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                         zoom: true,
                         drawGrid: true,
                         drawLine: true,
-                        formatter: (index) =>
+                        formatter: (index, value) =>
                             startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                       ),
                       charts: [
@@ -224,7 +224,7 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                         count: 9,
                         drawGrid: true,
                         zoom: true,
-                        formatter: (index) =>
+                        formatter: (index, value) =>
                             startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                       ),
                       charts: [
@@ -281,7 +281,7 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                         zoom: true,
                         drawGrid: true,
                         drawLine: true,
-                        formatter: (index) =>
+                        formatter: (index, value) =>
                             startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                       ),
                       charts: [
@@ -339,7 +339,7 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                           zoom: true,
                           drawGrid: true,
                           drawLine: true,
-                          formatter: (index) =>
+                          formatter: (index, value) =>
                               startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                         ),
                         charts: [
@@ -409,7 +409,7 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                         count: 7,
                         max: 20,
                         drawLine: false,
-                        formatter: (index) =>
+                        formatter: (index, value) =>
                             startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd'),
                       ),
                       charts: [

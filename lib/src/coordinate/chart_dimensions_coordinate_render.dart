@@ -97,7 +97,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
             adjustDirection: true);
         //绘制文本
         if (yA.drawLabel) {
-          String text = yA.formatter?.call(i) ?? '${min + vv}';
+          String text = yA.formatter?.call(i, min + vv) ?? '${min + vv}';
           if (i == count) {
             _drawYTextPaint(yA, canvas, text, yAxisIndex > 0, point.dx + yA.padding, point.dy, false);
           } else {
@@ -208,7 +208,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
       }
       Offset? oft = Offset(point.dx, 0);
       if (xAxis.drawLabel) {
-        String? text = xAxis.formatter?.call(i);
+        String? text = xAxis.formatter?.call(i, xValue);
         if (text != null) {
           bool adjustLast = (i == count);
           bool adjustFirst = (i == 0);
@@ -224,7 +224,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
       if (xDivideCount != null && xDivideCount > 0) {
         for (int j = 1; j < xDivideCount; j++) {
           num newValue = i + j * xAmplifyInterval!;
-          String? newText = xAxis.formatter?.call(newValue);
+          String? newText = xAxis.formatter?.call(j, xValue);
           double left = state.layout.left + density * interval * newValue;
           left = state.layout.transform.withXScroll(left);
           if (newText != null) {

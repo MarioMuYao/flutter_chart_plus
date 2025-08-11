@@ -125,14 +125,16 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
                   zoom: true,
                   drawDivider: true,
                   divideCount: (zoom) => zoom.toInt(),
-                  formatter: (index) {
+                  formatter: (index, value) {
                     double hours = (index % 1.0) * 24;
                     double minutes = (hours % 1.0) * 60;
                     if (hours == 0) {
                       //是否是0点
                       return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'MM-dd');
                     } else {
-                      return startTime.add(Duration(days: index.toInt(), hours: hours.toInt(), minutes: minutes.toInt())).toStringWithFormat(format: 'HH:mm');
+                      return startTime
+                          .add(Duration(days: index.toInt(), hours: hours.toInt(), minutes: minutes.toInt()))
+                          .toStringWithFormat(format: 'HH:mm');
                     }
                   },
                 ),
@@ -169,7 +171,7 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
                     dotRadius: 2,
                     isHollow: true,
                     data: dataList,
-                    position: (item,_) => parserDateTimeToDayValue(item['time'] as DateTime, startTime),
+                    position: (item, _) => parserDateTimeToDayValue(item['time'] as DateTime, startTime),
                     values: (item) => [
                       item['value1'] as num,
                     ],
