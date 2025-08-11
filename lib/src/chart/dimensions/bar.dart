@@ -7,7 +7,6 @@ typedef BarValuesFormatter<T> = List<String> Function(T);
 /// @author JD
 ///普通bar
 class Bar<T> extends ChartBodyRender<T> {
-
   Bar({
     required super.data,
     required this.value,
@@ -58,7 +57,6 @@ class Bar<T> extends ChartBodyRender<T> {
   ///动画结束后绘制文本
   final bool drawValueTextAfterAnimation;
 
-
   final Paint _paint = Paint()
     ..strokeWidth = 1
     ..style = PaintingStyle.fill;
@@ -91,7 +89,7 @@ class Bar<T> extends ChartBodyRender<T> {
 
     for (int index = 0; index < data.length; index++) {
       T item = data[index];
-      num xValue = position.call(item,index);
+      num xValue = position.call(item, index);
       num yValue = value.call(item);
       //是否有补间动画
       if (state.animal && layout.controlValue < 1) {
@@ -145,7 +143,8 @@ class Bar<T> extends ChartBodyRender<T> {
         offset = offset.translate(valueOffset.dx, -legendTextPainter.height / 2 + valueOffset.dy);
       } else {
         offset = p.originRect!.topCenter;
-        offset = offset.translate(-legendTextPainter.width / 2 + valueOffset.dx, -legendTextPainter.height + valueOffset.dy);
+        offset =
+            offset.translate(-legendTextPainter.width / 2 + valueOffset.dx, -legendTextPainter.height + valueOffset.dy);
       }
       legendTextPainter.paint(canvas, offset);
     }
@@ -194,7 +193,6 @@ typedef StackBarPosition<T> = List<num> Function(T);
 
 ///stackBar  支持水平/垂直排列
 class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerticalBarMinx<T> {
-
   StackBar({
     required super.data,
     required this.position,
@@ -213,6 +211,7 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
     this.valueOffset = Offset.zero,
     this.drawValueTextAfterAnimation = true,
   });
+
   ///不要使用过于耗时的方法
   ///数据在坐标系的位置，每个坐标系下取值逻辑不一样，在line和bar下是相对于每格的值，比如xAxis的interval为1，你的数据放在1列和2列中间，那么position就是0.5，在pie下是比例
   final ChartPosition<T> position;
@@ -256,7 +255,6 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
   ///动画结束后绘制文本
   final bool drawValueTextAfterAnimation;
 
-
   final Paint _paint = Paint()
     ..strokeWidth = 1
     ..style = PaintingStyle.fill;
@@ -272,7 +270,7 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
 
     for (int index = 0; index < data.length; index++) {
       T item = data[index];
-      num xValue = position.call(item,index);
+      num xValue = position.call(item, index);
       List<num> yValues = values.call(item);
       assert(colors.length >= yValues.length);
       assert(shaders == null || shaders!.length >= yValues.length);
@@ -357,7 +355,8 @@ mixin BarHorizontalMinx<T> on ChartBodyRender<T> {
 
       double left = layout.left;
       shape = ChartItemLayoutState.rect(
-        originRect: Rect.fromLTWH(left, top, contentWidth, _instance.itemWidth * yValues.length + _instance.padding * (yValues.length - 1)),
+        originRect: Rect.fromLTWH(
+            left, top, contentWidth, _instance.itemWidth * yValues.length + _instance.padding * (yValues.length - 1)),
       );
       List<ChartItemLayoutState> childrenLayoutState = [];
       for (num yV in yValues) {
@@ -376,13 +375,14 @@ mixin BarHorizontalMinx<T> on ChartBodyRender<T> {
       double bottom = layout.bottom;
       double contentHeight = layout.contentHeight;
 
-      double center = yValues.length * _instance.itemWidth / 2;
+      double center = yValues.length * _instance.itemWidth / 2 + _instance.padding * (yValues.length - 1) / 2;
 
       double left = layout.left + layout.xAxis.density * xValue - _instance.itemWidth / 2 - center;
       left = layout.transform.withXScroll(left);
 
       shape = ChartItemLayoutState.rect(
-        originRect: Rect.fromLTWH(left, layout.top, _instance.itemWidth * yValues.length + _instance.padding * (yValues.length - 1), contentHeight),
+        originRect: Rect.fromLTWH(left, layout.top,
+            _instance.itemWidth * yValues.length + _instance.padding * (yValues.length - 1), contentHeight),
       );
       List<ChartItemLayoutState> childrenLayoutState = [];
       for (num yV in yValues) {
@@ -418,7 +418,8 @@ mixin BarHorizontalMinx<T> on ChartBodyRender<T> {
         offset = offset.translate(_instance.valueOffset.dx, -legendTextPainter.height / 2 + _instance.valueOffset.dy);
       } else {
         offset = p.originRect!.topCenter;
-        offset = offset.translate(-legendTextPainter.width / 2 + _instance.valueOffset.dx, -legendTextPainter.height + _instance.valueOffset.dy);
+        offset = offset.translate(-legendTextPainter.width / 2 + _instance.valueOffset.dx,
+            -legendTextPainter.height + _instance.valueOffset.dy);
       }
       legendTextPainter.paint(canvas, offset);
     }
@@ -501,10 +502,12 @@ mixin BarVerticalBarMinx<T> on ChartBodyRender<T>, BarHorizontalMinx<T> {
       Offset offset = Offset.zero;
       if (layout.invert) {
         offset = p.originRect!.center;
-        offset = offset.translate(-legendTextPainter.width / 2 + _instance.valueOffset.dx, -legendTextPainter.height / 2 + _instance.valueOffset.dy);
+        offset = offset.translate(-legendTextPainter.width / 2 + _instance.valueOffset.dx,
+            -legendTextPainter.height / 2 + _instance.valueOffset.dy);
       } else {
         offset = p.originRect!.center;
-        offset = offset.translate(_instance.itemWidth / 2 + 2 + _instance.valueOffset.dx, -legendTextPainter.height / 2 + _instance.valueOffset.dy);
+        offset = offset.translate(_instance.itemWidth / 2 + 2 + _instance.valueOffset.dx,
+            -legendTextPainter.height / 2 + _instance.valueOffset.dy);
       }
       legendTextPainter.paint(canvas, offset);
     }
