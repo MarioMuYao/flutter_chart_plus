@@ -328,7 +328,6 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
   void _drawCrosshair(ChartsState state, Canvas canvas, Size size) {
     Offset? anchor = state.layout.localPosition;
     if (anchor == null) {
-      print('======');
       return;
     }
     if (!crossHair.verticalShow && !crossHair.horizontalShow) {
