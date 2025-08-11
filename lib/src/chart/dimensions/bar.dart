@@ -377,7 +377,7 @@ mixin BarHorizontalMinx<T> on ChartBodyRender<T> {
 
       double center = yValues.length * _instance.itemWidth / 2 + _instance.padding * (yValues.length - 1) / 2;
 
-      double left = layout.left + layout.xAxis.density * xValue - _instance.itemWidth / 2 - center;
+      double left = layout.left + layout.xAxis.density * xValue - center;
       left = layout.transform.withXScroll(left);
 
       shape = ChartItemLayoutState.rect(
