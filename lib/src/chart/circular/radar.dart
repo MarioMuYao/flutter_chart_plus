@@ -127,8 +127,8 @@ class Radar<T> extends ChartBodyRender<T> {
       final y = math.sin(startAngle) * radius + center.dy;
       _linePathList.add(_buildDashPath(
           Path()
-            ..moveTo(center.dx, center.dy)
-            ..lineTo(x, y),
+            ..moveTo(x, y)
+            ..lineTo(center.dx, center.dy),
           4,
           4));
 
@@ -240,7 +240,7 @@ class Radar<T> extends ChartBodyRender<T> {
     final Path r = Path();
     for (ui.PathMetric metric in path.computeMetrics()) {
       double start = 0.0;
-      while (start < metric.length) {
+      while (start < metric.length - 2) {
         double end = start + dashWidth;
         r.addPath(metric.extractPath(start, end), Offset.zero);
         start = end + gapWidth;
