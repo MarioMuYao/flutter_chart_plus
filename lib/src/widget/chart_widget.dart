@@ -226,11 +226,12 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
   double _beforeZoom = 1.0;
   late Offset _lastOffset;
   late ChartsState _chartState;
-  get _controller => widget.chartCoordinateRender.controller;
+  ChartController get _controller => widget.chartCoordinateRender.controller;
 
   ///缓存所有chart的状态
   late List<ChartLayoutState> _allChartState;
   AnimationController? _animationController;
+
   @override
   void initState() {
     if (widget.chartCoordinateRender.animationDuration != null) {
@@ -297,6 +298,18 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
     _animationController?.forward();
   }
 
+  void _handleTooltip(Offset localPosition, [bool reset = true]) {
+    if (reset) {
+      _controller.resetTooltip();
+    }
+    if (!_checkForegroundAnnotationsEvent(localPosition)) {
+      hitTest(localPosition);
+      _chartState.localPosition = localPosition;
+    } else {
+      _chartState.localPosition = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _chartState = ChartsState.coordinate(
@@ -311,15 +324,15 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTapUp: (TapUpDetails details) {
-        _controller.resetTooltip();
-        if (!_checkForegroundAnnotationsEvent(details.localPosition)) {
-          Offset localPosition = details.localPosition;
-          hitTest(localPosition);
-          _chartState.localPosition = localPosition;
-        } else {
-          _chartState.localPosition = null;
-        }
+        _handleTooltip(details.localPosition);
       },
+      onLongPressStart: (details) {
+        _handleTooltip(details.localPosition);
+      },
+      onLongPressMoveUpdate: (details) {
+        _handleTooltip(details.localPosition, false);
+      },
+      onLongPressEnd: (details) {},
       onScaleStart: (ScaleStartDetails details) {
         _beforeZoom = _chartState.layout.zoom;
         _lastOffset = _chartState.layout.offset;
