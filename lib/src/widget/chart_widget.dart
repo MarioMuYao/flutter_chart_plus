@@ -298,10 +298,8 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
     _animationController?.forward();
   }
 
-  void _handleTooltip(Offset localPosition, [bool reset = true]) {
-    if (reset) {
-      _controller.resetTooltip();
-    }
+  void _handleTooltip(Offset localPosition) {
+    _controller.resetTooltip();
     if (!_checkForegroundAnnotationsEvent(localPosition)) {
       hitTest(localPosition);
       _chartState.localPosition = localPosition;

@@ -167,10 +167,15 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                       //提示的文案信息
                       crossHair: const CrossHairStyle(adjustHorizontal: true, adjustVertical: true),
                       tooltipBuilder: (BuildContext context, List<ChartLayoutState> body) {
+                        int? index = body.where((element) => element.selectedIndex != null).firstOrNull?.selectedIndex;
+                        if (index == null) {
+                          return null;
+                        }
                         return PreferredSize(
                           preferredSize: const Size(60, 60),
                           child: Container(
                             padding: const EdgeInsets.all(8),
+                            color: Colors.red,
                             child: Text(body.map((e) => e.selectedIndex).toString()),
                           ),
                         );

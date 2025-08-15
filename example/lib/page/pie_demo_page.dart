@@ -20,31 +20,29 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
     final List<Map> dataList = [
       {
         'time': startTime.add(const Duration(days: 1)),
-        'value1': Random().nextInt(500),
+        'value1': 80,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 3)),
-        'value1': Random().nextInt(500),
+        'value1': 15,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 5)),
-        'value1': Random().nextInt(500),
+        'value1': 20,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 8)),
-        'value1': Random().nextInt(500),
+        'value1': 500,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
     ];
-
-
 
     return Scaffold(
       appBar: AppBar(
@@ -62,47 +60,54 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
         child: Column(
           children: [
             const Text('Pie'),
-            SizedBox(
-              height: 200,
-              child: ChartWidget(
-                coordinateRender: ChartCircularCoordinateRender(
-                  margin: const EdgeInsets.all(30),
-                  animationDuration: const Duration(seconds: 1),
-                  onClickChart: (BuildContext context, List<ChartLayoutState> list) {
-                    debugPrint("点击事件:$list");
-                  },
-                  charts: [
-                    Pie(
-                      data: dataList,
-                      position: (item,_) => (double.parse(item['value1'].toString())),
-                      valueFormatter: (item) => item['value1'].toString(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // SizedBox(
+            //   height: 200,
+            //   child: ChartWidget(
+            //     coordinateRender: ChartCircularCoordinateRender(
+            //       margin: const EdgeInsets.all(30),
+            //       animationDuration: const Duration(seconds: 1),
+            //       onClickChart: (BuildContext context, List<ChartLayoutState> list) {
+            //         debugPrint("点击事件:$list");
+            //       },
+            //       charts: [
+            //         Pie(
+            //           data: dataList,
+            //           position: (item, _) => (double.parse(item['value1'].toString())),
+            //           valueFormatter: (item) => item['value1'].toString(),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             // const Text('Hole Pie'),
-            SizedBox(
-              height: 200,
-              child: ChartWidget(
-                coordinateRender: ChartCircularCoordinateRender(
-                  animationDuration: const Duration(seconds: 1),
-                  margin: const EdgeInsets.all(30),
-                  charts: [
-                    Pie(
-                      guideLine: true,
-                      drawValueTextAfterAnimation: false,
-                      data: dataList,
-                      position: (item,_) => (double.parse(item['value1'].toString())),
-                      holeRadius: 40,
-                      valueTextOffset: 20,
-                      legendFormatter: (item) {
-                        return (item['time'] as DateTime).toStringWithFormat(format: 'MM-dd');
-                      },
-                      centerTextStyle: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-                      valueFormatter: (item) => item['value1'].toString(),
-                    ),
-                  ],
+            Padding(
+              padding: EdgeInsets.all(50),
+              child: SizedBox(
+                height: 160,
+                child: ChartWidget(
+                  coordinateRender: ChartCircularCoordinateRender(
+                    animationDuration: const Duration(seconds: 1),
+                    charts: [
+                      Pie(
+                        startAngle: -90 * pi / 180,
+                        spaceWidth: 2,
+                        guideLine: true,
+                        // guideLineWidth: 20,
+                        drawValueTextAfterAnimation: false,
+                        data: dataList,
+                        position: (item, _) => (double.parse(item['value1'].toString())),
+                        holeRadius: 50,
+                        // valueTextOffset: 20,
+                        legendFormatter: (item) {
+                          return (item['time'] as DateTime).toStringWithFormat(format: 'MM-dd');
+                        },
+                        // legendValueFormatter: (p0) => 'sss',
+                        centerTextStyle:
+                            const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                        // valueFormatter: (item) => item['value1'].toString(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

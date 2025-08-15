@@ -1,4 +1,3 @@
-import 'package:example/page/extension_datetime.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chart_plus/flutter_chart.dart';
 
@@ -54,6 +53,12 @@ class _RadarChartDemoPageState extends State<RadarChartDemoPage> with SingleTick
         'value2': 300,
         'value3': 200,
       },
+      {
+        'title': "泡妞",
+        'value1': 100,
+        'value2': 300,
+        'value3': 200,
+      },
     ];
 
     return Scaffold(
@@ -69,16 +74,40 @@ class _RadarChartDemoPageState extends State<RadarChartDemoPage> with SingleTick
               margin: const EdgeInsets.only(top: 20),
               child: ChartWidget(
                 coordinateRender: ChartCircularCoordinateRender(
-                  margin: const EdgeInsets.all(12),
+                  borderColor: Colors.transparent,
+                  margin: const EdgeInsets.all(20),
                   charts: [
                     Radar(
+                      spacing: 8,
                       max: 600,
                       data: dataList,
                       fillColors: colors10.map((e) => e.withOpacity(0.2)).toList(),
-                      legendFormatter: () => dataList.map((e) => e['title']).toList(),
-                      valueFormatter: (item) => [
-                        item['value1'],
-                      ],
+                      // legendFormatter: () => dataList.map((e) => e['title']).toList(),
+                      legendTextPainterBuilder: (item, index) => TextPainter(
+                        textDirection: TextDirection.ltr,
+                        textAlign: [4, 5].contains(index) ? TextAlign.end : TextAlign.start,
+                        text: TextSpan(
+                          text: '${item['title']}${[0, 3].contains(index) ? ' ' : '\n'}',
+                          children: <InlineSpan>[
+                            TextSpan(
+                              text: '${item['value1']}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.red,
+                          ),
+                        ),
+                      )..layout(maxWidth: 60),
+                      // valueFormatter: (item) => [
+                      //   item['value1'],
+                      // ],
+                      lineColor: Colors.black,
+                      lineBackgroundColorBuilder: (index) => index.isEven ? Colors.red : Colors.white,
                       values: (item) => [
                         (double.parse(item['value1'].toString())),
                       ],
