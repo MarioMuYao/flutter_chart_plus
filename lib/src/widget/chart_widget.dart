@@ -330,9 +330,16 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
         _handleTooltip(details.localPosition);
       },
       onLongPressMoveUpdate: (details) {
-        _handleTooltip(details.localPosition, false);
+        if (_checkForegroundAnnotationsEvent(details.localPosition)) {
+          return;
+        }
+        hitTest(details.localPosition);
+        _chartState.localPosition = details.localPosition;
       },
-      onLongPressEnd: (details) {},
+      onLongPressEnd: (details) {
+        _controller.resetTooltip();
+        _chartState.localPosition = null;
+      },
       onScaleStart: (ScaleStartDetails details) {
         _beforeZoom = _chartState.layout.zoom;
         _lastOffset = _chartState.layout.offset;
