@@ -107,6 +107,7 @@ class _RadarChartDemoPageState extends State<RadarChartDemoPage> with SingleTick
                       //   item['value1'],
                       // ],
                       strokeWidth: 3,
+                      lineWidth: 1,
                       lineColor: Colors.black,
                       lineBackgroundColorBuilder: (index) => index.isEven ? Colors.red : Colors.white,
                       values: (item) => [

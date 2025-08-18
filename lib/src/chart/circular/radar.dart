@@ -18,6 +18,7 @@ class Radar<T> extends ChartBodyRender<T> {
     required super.data,
     required this.values,
     required this.max,
+    this.lineWidth = 1,
     this.lineColor = Colors.black12,
     this.direction = RotateDirection.forward,
     this.valueFormatter,
@@ -53,6 +54,9 @@ class Radar<T> extends ChartBodyRender<T> {
 
   final RadarLineBackgroundColorBuilder? lineBackgroundColorBuilder;
 
+  ///基线的宽度
+  final double lineWidth;
+
   ///基线的颜色
   final Color lineColor;
 
@@ -81,7 +85,7 @@ class Radar<T> extends ChartBodyRender<T> {
 
   late double _sweepAngle;
   late final Paint _linePaint = Paint()
-    ..strokeWidth = 1.0
+    ..strokeWidth = lineWidth
     ..isAntiAlias = true
     ..color = lineColor
     ..style = PaintingStyle.stroke;
