@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:example/page/extension_datetime.dart';
-import 'package:example/page/widget/wave_progress_demo.dart';
+// import 'package:example/page/widget/wave_progress_demo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chart_plus/flutter_chart.dart';
 
@@ -15,30 +15,45 @@ class PieChartDemoPage extends StatefulWidget {
 
 class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerProviderStateMixin {
   final DateTime startTime = DateTime(2023, 1, 1);
+
+  ChartController controller = ChartController();
+
   @override
   Widget build(BuildContext context) {
     final List<Map> dataList = [
       {
         'time': startTime.add(const Duration(days: 1)),
-        'value1': 80,
+        'value1': 8.45,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 3)),
-        'value1': 15,
+        'value1': 4.83,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 5)),
-        'value1': 20,
+        'value1': 4.09,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 8)),
-        'value1': 500,
+        'value1': 3.87,
+        'value2': Random().nextInt(500),
+        'value3': Random().nextInt(500),
+      },
+      {
+        'time': startTime.add(const Duration(days: 8)),
+        'value1': 2.26,
+        'value2': Random().nextInt(500),
+        'value3': Random().nextInt(500),
+      },
+      {
+        'time': startTime.add(const Duration(days: 8)),
+        'value1': 76.49,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
@@ -85,11 +100,14 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
               child: SizedBox(
                 height: 160,
                 child: ChartWidget(
+                  controller: controller,
                   coordinateRender: ChartCircularCoordinateRender(
+                    borderWidth: 0,
                     animationDuration: const Duration(seconds: 1),
                     charts: [
                       Pie(
                         startAngle: -90 * pi / 180,
+                        scale: 1.1,
                         spaceWidth: 2,
                         guideLine: true,
                         // guideLineWidth: 20,
@@ -110,6 +128,13 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
                   ),
                 ),
               ),
+            ),
+            InkWell(
+              onTap: () {
+                controller.chartsStateList.firstOrNull?.selectedIndex = 2;
+                controller.notify();
+              },
+              child: Text('aaaaa'),
             ),
           ],
         ),

@@ -29,6 +29,8 @@ abstract class ChartsState extends ChangeNotifier {
     }
   }
 
+  void notify() => notifyListeners();
+
   ///不在屏幕内是否绘制 默认不绘制
   final bool outDraw;
 
@@ -83,7 +85,10 @@ abstract class ChartsState extends ChangeNotifier {
   @override
   bool operator ==(Object other) {
     if (other is ChartsState) {
-      return super == other && _layout.zoom == other._layout.zoom && _layout.localPosition == other._layout.localPosition && _layout.offset == other._layout.offset;
+      return super == other &&
+          _layout.zoom == other._layout.zoom &&
+          _layout.localPosition == other._layout.localPosition &&
+          _layout.offset == other._layout.offset;
     }
     return super == other;
   }

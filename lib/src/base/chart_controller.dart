@@ -26,6 +26,8 @@ class ChartController {
   Offset? get outLocation => _outLocation;
   Offset? get localPosition => _state?.layout.localPosition;
 
+  void notify() => _state?.notify();
+
   ///重置提示框
   void resetTooltip() {
     bool needNotify = false;

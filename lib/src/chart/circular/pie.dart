@@ -29,6 +29,7 @@ class Pie<T> extends ChartBodyRender<T> {
     this.guideLineWidth,
     this.enableTap = true,
     this.startAngle = 0,
+    this.scale = 1,
     this.drawValueTextAfterAnimation = true,
   });
 
@@ -86,6 +87,8 @@ class Pie<T> extends ChartBodyRender<T> {
 
   ///开始弧度，可以调整起始位置
   final double startAngle;
+
+  final double scale;
 
   ///动画结束后绘制文本
   final bool drawValueTextAfterAnimation;
@@ -157,7 +160,7 @@ class Pie<T> extends ChartBodyRender<T> {
       //判断是否选中
       bool selected = enableTap && chartState.selectedIndex == i;
       if (selected) {
-        rd = radius * 1.05;
+        rd = radius * scale;
         tapShape = measurePath(
             center: center, startAngle: startAngle, sweepAngle: sweepAngle, innerRadius: holeRadius, outRadius: rd);
       }
