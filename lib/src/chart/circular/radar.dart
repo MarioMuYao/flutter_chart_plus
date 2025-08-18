@@ -24,6 +24,7 @@ class Radar<T> extends ChartBodyRender<T> {
     this.legendFormatter,
     this.legendTextPainterBuilder,
     this.lineBackgroundColorBuilder,
+    this.strokeWidth = 1,
     this.colors = colors10,
     this.startAngle = -math.pi / 2,
     this.fillColors,
@@ -55,6 +56,9 @@ class Radar<T> extends ChartBodyRender<T> {
   ///基线的颜色
   final Color lineColor;
 
+  /// 值线的宽度
+  final double strokeWidth;
+
   ///值的线颜色
   final List<Color> colors;
 
@@ -82,7 +86,7 @@ class Radar<T> extends ChartBodyRender<T> {
     ..color = lineColor
     ..style = PaintingStyle.stroke;
   late final Paint _dataLinePaint = Paint()
-    ..strokeWidth = 1.0
+    ..strokeWidth = strokeWidth
     ..isAntiAlias = true
     ..style = PaintingStyle.stroke;
   Paint? _fillDataLinePaint;
