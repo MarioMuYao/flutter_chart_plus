@@ -18,6 +18,7 @@ class Radar<T> extends ChartBodyRender<T> {
     required super.data,
     required this.values,
     required this.max,
+    this.dashStartSpacing = 0,
     this.lineWidth = 1,
     this.lineColor = Colors.black12,
     this.direction = RotateDirection.forward,
@@ -53,6 +54,8 @@ class Radar<T> extends ChartBodyRender<T> {
   final RadarLegendTextPainterBuilder? legendTextPainterBuilder;
 
   final RadarLineBackgroundColorBuilder? lineBackgroundColorBuilder;
+
+  final double dashStartSpacing;
 
   ///基线的宽度
   final double lineWidth;
@@ -248,7 +251,7 @@ class Radar<T> extends ChartBodyRender<T> {
     final Path r = Path();
     for (ui.PathMetric metric in path.computeMetrics()) {
       double start = 0.0;
-      while (start < metric.length - 2) {
+      while (start < metric.length - dashStartSpacing) {
         double end = start + dashWidth;
         r.addPath(metric.extractPath(start, end), Offset.zero);
         start = end + gapWidth;

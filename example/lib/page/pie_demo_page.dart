@@ -95,36 +95,45 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
             //   ),
             // ),
             // const Text('Hole Pie'),
-            Padding(
-              padding: EdgeInsets.all(50),
-              child: SizedBox(
-                height: 160,
-                child: ChartWidget(
-                  controller: controller,
-                  coordinateRender: ChartCircularCoordinateRender(
-                    borderWidth: 0,
-                    animationDuration: const Duration(seconds: 1),
-                    charts: [
-                      Pie(
-                        startAngle: -90 * pi / 180,
-                        scale: 1.1,
-                        spaceWidth: 2,
-                        guideLine: true,
-                        // guideLineWidth: 20,
-                        drawValueTextAfterAnimation: false,
-                        data: dataList,
-                        position: (item, _) => (double.parse(item['value1'].toString())),
-                        holeRadius: 50,
-                        // valueTextOffset: 20,
-                        legendFormatter: (item) {
-                          return (item['time'] as DateTime).toStringWithFormat(format: 'MM-dd');
-                        },
-                        // legendValueFormatter: (p0) => 'sss',
-                        centerTextStyle:
-                            const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-                        // valueFormatter: (item) => item['value1'].toString(),
-                      ),
-                    ],
+            Container(
+              color: Colors.black,
+              child: Padding(
+                padding: EdgeInsets.all(50),
+                child: SizedBox(
+                  height: 160,
+                  child: ChartWidget(
+                    controller: controller,
+                    coordinateRender: ChartCircularCoordinateRender(
+                      onClickChart: (context, list) {
+                        print('=======${list.firstOrNull?.selectedIndex}');
+                      },
+                      borderWidth: 0,
+                      animationDuration: const Duration(seconds: 1),
+                      charts: [
+                        Pie(
+                          startAngle: -90 * pi / 180,
+                          scale: 1.1,
+                          spaceWidth: 2,
+                          dividerColor: Colors.black,
+                          guideLine: true,
+                          lineColor: Colors.red,
+                          // guideLineWidth: 20,
+                          drawValueTextAfterAnimation: false,
+                          data: dataList,
+                          position: (item, index) => (double.parse(item['value1'].toString())),
+                          holeRadius: 50,
+                          // valueTextOffset: 20,
+                          legendFormatter: (item) {
+                            return '10%';
+                          },
+                          // legendValueFormatter: (p0) => 'sss',
+                          centerTextStyle:
+                              const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+
+                          valueFormatter: (item) => 'aaaaaaaaaaaaaaaaaaaaaaaaa',
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

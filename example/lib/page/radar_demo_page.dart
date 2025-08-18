@@ -80,6 +80,7 @@ class _RadarChartDemoPageState extends State<RadarChartDemoPage> with SingleTick
                     Radar(
                       spacing: 8,
                       max: 600,
+                      dashStartSpacing: 0,
                       data: dataList,
                       fillColors: colors10.map((e) => e.withOpacity(0.2)).toList(),
                       // legendFormatter: () => dataList.map((e) => e['title']).toList(),

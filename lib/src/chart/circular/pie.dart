@@ -19,6 +19,7 @@ class Pie<T> extends ChartBodyRender<T> {
     this.legendTextStyle = const TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold),
     this.lineColor = Colors.grey,
     this.spaceWidth,
+    this.dividerColor = Colors.white,
     this.valueTextOffset = 0,
     this.valueFormatter,
     this.legendFormatter,
@@ -75,6 +76,8 @@ class Pie<T> extends ChartBodyRender<T> {
 
   ///百分比
   final double? spaceWidth;
+
+  final Color dividerColor;
 
   ///是否能点击
   final bool enableTap;
@@ -215,7 +218,7 @@ class Pie<T> extends ChartBodyRender<T> {
     Offset end1Offset = Offset(end1X, end1Y);
     Paint paint = Paint()
       ..style = PaintingStyle.fill
-      ..color = Colors.white
+      ..color = dividerColor
       ..strokeWidth = spaceWidth!;
     canvas.drawLine(start1Offset, end1Offset, paint);
     //结束线
