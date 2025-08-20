@@ -116,7 +116,7 @@ class YAxis {
     this.offset,
     this.padding = 0,
   })  : assert(zoom == false, '暂不支持垂直方向缩放'),
-        assert(max > 0, "max must be greater than 0 ");
+        assert(max != min, "max must be greater than min ");
 
   ///最小值
   final num min;
