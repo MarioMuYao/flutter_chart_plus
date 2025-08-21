@@ -167,13 +167,20 @@ class Bar<T> extends ChartBodyRender<T> {
       }
       rect = Rect.fromLTWH(left, top, itemHeight, itemWidth);
     } else {
+      num max = layout.yAxis[yAxisPosition].max;
+      num min = layout.yAxis[yAxisPosition].min;
+      num value = max - min;
       double bottom = layout.bottom;
       double contentHeight = layout.contentHeight;
       double left = layout.left + layout.xAxis.density * xValue - itemWidth / 2;
       left = layout.transform.withXScroll(left);
-      double present = yValue / layout.yAxis[yAxisPosition].max;
+      double present = yValue.abs() / value;
       double itemHeight = contentHeight * present;
-      double top = bottom - itemHeight;
+      double baseHeight = contentHeight * (min.abs() / value);
+      if (yValue < 0) {
+        baseHeight -= itemHeight;
+      }
+      double top = bottom - itemHeight - baseHeight;
       if (left > layout.size.width || (left + itemWidth) < 0) {
         return ChartItemLayoutState()
           ..xValue = xValue

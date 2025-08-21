@@ -173,6 +173,7 @@ class Pie<T> extends ChartBodyRender<T> {
         _paint.color = colors[i];
       }
       drawPie(canvas, tapShape.path!, _paint);
+
       //绘制间隙
       _drawSpaceLine(layout, canvas, rd, startAngle, sweepAngle);
 
@@ -205,7 +206,7 @@ class Pie<T> extends ChartBodyRender<T> {
   ///画空隙线
   void _drawSpaceLine(
       ChartCircularCoordinateState layout, Canvas canvas, double radius, double startAngle, double sweepAngle) {
-    if (spaceWidth == null) {
+    if (data.length <= 1 || spaceWidth == null) {
       return;
     }
     Offset center = layout.center;
