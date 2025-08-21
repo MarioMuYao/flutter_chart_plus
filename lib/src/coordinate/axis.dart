@@ -102,7 +102,7 @@ class XAxis {
 ///y轴配置
 class YAxis {
   YAxis({
-    required this.max,
+    required num max,
     this.min = 0,
     this.formatter,
     this.drawLabel = true,
@@ -116,7 +116,7 @@ class YAxis {
     this.offset,
     this.padding = 0,
   })  : assert(zoom == false, '暂不支持垂直方向缩放'),
-        assert(max != min, "max must be greater than min ");
+        max = max == min ? max + 1 : max;
 
   ///最小值
   final num min;
