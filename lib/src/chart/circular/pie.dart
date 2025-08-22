@@ -133,7 +133,7 @@ class Pie<T> extends ChartBodyRender<T> {
     List<ChartItemLayoutState> childrenLayoutState = [];
     assert(colors.length >= data.length);
     assert(shaders == null || shaders!.length >= data.length);
-    int index = 0;
+    _lastTextRect = null;
     for (int i = 0; i < data.length; i++) {
       T item = data[i];
       //直接读取
@@ -142,7 +142,7 @@ class Pie<T> extends ChartBodyRender<T> {
       //tween动画
       if (state.animal && layout.controlValue < 1) {
         num? lastPercent;
-        if (lastLayoutState != null && index < lastLayoutState.length) {
+        if (lastLayoutState != null && i < lastLayoutState.length) {
           lastPercent = lastLayoutState[i].yValue;
         }
         //初始动画x轴不动
@@ -183,7 +183,8 @@ class Pie<T> extends ChartBodyRender<T> {
 
       //绘制引导线和文本
       if (guideLine && (layout.controlValue == 1 || !drawValueTextAfterAnimation)) {
-        _drawLineAndText(layout, canvas, legendValueText, legend, index, rd, startAngle, sweepAngle);
+        _drawLineAndText(
+            layout, canvas, legendValueText, legend, i, rd, startAngle, sweepAngle, chartState.selectedIndex);
       }
       //选中就绘制
       if (selected) {
@@ -198,7 +199,6 @@ class Pie<T> extends ChartBodyRender<T> {
       }
       //继续下一个
       startAngle = startAngle + sweepAngle;
-      index++;
     }
     chartState.children = childrenLayoutState;
   }
@@ -232,18 +232,23 @@ class Pie<T> extends ChartBodyRender<T> {
     canvas.drawLine(start2Offset, end2Offset, paint);
   }
 
+  Rect? _lastTextRect;
   void _drawLineAndText(ChartCircularCoordinateState layout, Canvas canvas, String? valueText, String? legend,
-      int index, double radius, double startAngle, double sweepAngle) {
+      int index, double radius, double startAngle, double sweepAngle, int? selectedIndex) {
     if (valueText == null && legend == null) {
       return;
     }
+    double alpha = 0.1;
     TextPainter? legendTextPainter;
     if (legend != null) {
       legendTextPainter = TextPainter(
         textAlign: TextAlign.center,
         text: TextSpan(
           text: legend,
-          style: legendTextStyle,
+          style: legendTextStyle.copyWith(
+              color: selectedIndex == null || selectedIndex == index
+                  ? legendTextStyle.color
+                  : legendTextStyle.color?.withAlpha((255 * alpha * (legendTextStyle.color?.a ?? 1)).round())),
         ),
         textDirection: TextDirection.ltr,
       )..layout(
@@ -280,11 +285,6 @@ class Pie<T> extends ChartBodyRender<T> {
     Offset point1 = Offset(math.cos(radians) * (radius), math.sin(radians) * (radius)).translate(center.dx, center.dy);
     Offset point2 = Offset(math.cos(radians) * (radius + line1), math.sin(radians) * (radius + line1))
         .translate(center.dx, center.dy);
-    Paint paint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = lineColor
-      ..strokeWidth = 1;
-    canvas.drawLine(point1, point2, paint);
     Offset point3;
     //绘制延长线
     bool isLeft;
@@ -292,13 +292,10 @@ class Pie<T> extends ChartBodyRender<T> {
       isLeft = false;
       //说明在左边
       point3 = Offset(point2.dx + line2, point2.dy);
-      canvas.drawLine(point2, point3, paint);
     } else {
       isLeft = true;
       point3 = Offset(point2.dx - line2, point2.dy);
-      canvas.drawLine(point2, point3, paint);
     }
-
     if (legendTextPainter != null) {
       // 使用三角函数计算文字位置 并根据文字大小适配
       Offset textOffset =
@@ -308,8 +305,23 @@ class Pie<T> extends ChartBodyRender<T> {
       //   ..color = colors[index]
       //   ..strokeWidth = 1;
       // canvas.drawCircle(Offset(textOffset.dx - 6, textOffset.dy + legendTextPainter.height / 2), 4, dotPaint);
+      Rect textRect = Rect.fromLTWH(textOffset.dx, textOffset.dy, legendTextPainter.width, legendTextPainter.height);
+      if (_lastTextRect != null && _lastTextRect!.overlaps(textRect) && index != selectedIndex) {
+        return;
+      }
+      if (index == 0 || index != selectedIndex) {
+        _lastTextRect = textRect;
+      }
       legendTextPainter.paint(canvas, textOffset);
     }
+    Paint paint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = selectedIndex == null || selectedIndex == index
+          ? lineColor
+          : lineColor.withAlpha((255 * alpha * lineColor.a).round())
+      ..strokeWidth = 1;
+    canvas.drawLine(point1, point2, paint);
+    canvas.drawLine(point2, point3, paint);
 
     if (valueTextPainter != null) {
       // 使用三角函数计算文字位置 并根据文字大小适配
