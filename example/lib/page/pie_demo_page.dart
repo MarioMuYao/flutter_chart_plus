@@ -23,31 +23,31 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
     final List<Map> dataList = [
       {
         'time': startTime.add(const Duration(days: 1)),
-        'value1': 8.45,
+        'value1': 1.45,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 3)),
-        'value1': 4.83,
+        'value1': 1.83,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 5)),
-        'value1': 4.09,
+        'value1': 1.09,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 8)),
-        'value1': 3.87,
+        'value1': 1.87,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
       {
         'time': startTime.add(const Duration(days: 8)),
-        'value1': 2.26,
+        'value1': 1.26,
         'value2': Random().nextInt(500),
         'value3': Random().nextInt(500),
       },
@@ -96,7 +96,7 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
             // ),
             // const Text('Hole Pie'),
             Container(
-              color: Colors.black,
+              color: Colors.lightBlue,
               child: Padding(
                 padding: EdgeInsets.all(50),
                 child: SizedBox(
@@ -104,6 +104,7 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
                   child: ChartWidget(
                     controller: controller,
                     coordinateRender: ChartCircularCoordinateRender(
+                      margin: EdgeInsets.all(30),
                       onClickChart: (context, list) {
                         print('=======${list.firstOrNull?.selectedIndex}');
                       },
@@ -121,7 +122,7 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
                           drawValueTextAfterAnimation: false,
                           data: dataList,
                           position: (item, index) => (double.parse(item['value1'].toString())),
-                          holeRadius: 50,
+                          holeRadius: 20,
                           // valueTextOffset: 20,
                           legendFormatter: (item) {
                             return '10%';
@@ -130,7 +131,7 @@ class _PieChartDemoPageState extends State<PieChartDemoPage> with SingleTickerPr
                           centerTextStyle:
                               const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
 
-                          valueFormatter: (item) => 'aaaaaaaaaaaaaaaaaaaaaaaaa',
+                          valueFormatter: (item) => '',
                         ),
                       ],
                     ),

@@ -31,6 +31,7 @@ class Pie<T> extends ChartBodyRender<T> {
     this.enableTap = true,
     this.startAngle = 0,
     this.scale = 1,
+    this.alpha = 1,
     this.drawValueTextAfterAnimation = true,
   });
 
@@ -92,6 +93,8 @@ class Pie<T> extends ChartBodyRender<T> {
   final double startAngle;
 
   final double scale;
+
+  final double alpha;
 
   ///动画结束后绘制文本
   final bool drawValueTextAfterAnimation;
@@ -238,7 +241,6 @@ class Pie<T> extends ChartBodyRender<T> {
     if (valueText == null && legend == null) {
       return;
     }
-    double alpha = 0.1;
     TextPainter? legendTextPainter;
     if (legend != null) {
       legendTextPainter = TextPainter(
@@ -298,6 +300,28 @@ class Pie<T> extends ChartBodyRender<T> {
     }
     if (legendTextPainter != null) {
       // 使用三角函数计算文字位置 并根据文字大小适配
+      double r = layout.radius;
+      Offset p2 =
+          Offset(math.cos(radians) * (r + line1), math.sin(radians) * (r + line1)).translate(center.dx, center.dy);
+      Offset p3 = Offset(isLeft ? p2.dx - line2 : p2.dx + line2, p2.dy);
+      Rect textRect = Rect.fromLTWH(
+        isLeft ? p3.dx : p3.dx - legendTextPainter.width,
+        p3.dy - legendTextPainter.height,
+        legendTextPainter.width,
+        legendTextPainter.height,
+      );
+      bool record = true;
+      if (_lastTextRect != null && _lastTextRect!.overlaps(textRect)) {
+        if (index != selectedIndex) {
+          return;
+        } else {
+          record = false;
+        }
+      }
+      if (record) {
+        _lastTextRect = textRect;
+      }
+
       Offset textOffset =
           Offset(isLeft ? point3.dx : point3.dx - legendTextPainter.width, point3.dy - legendTextPainter.height);
       // Paint dotPaint = Paint()
@@ -305,13 +329,6 @@ class Pie<T> extends ChartBodyRender<T> {
       //   ..color = colors[index]
       //   ..strokeWidth = 1;
       // canvas.drawCircle(Offset(textOffset.dx - 6, textOffset.dy + legendTextPainter.height / 2), 4, dotPaint);
-      Rect textRect = Rect.fromLTWH(textOffset.dx, textOffset.dy, legendTextPainter.width, legendTextPainter.height);
-      if (_lastTextRect != null && _lastTextRect!.overlaps(textRect) && index != selectedIndex) {
-        return;
-      }
-      if (index == 0 || index != selectedIndex) {
-        _lastTextRect = textRect;
-      }
       legendTextPainter.paint(canvas, textOffset);
     }
     Paint paint = Paint()
