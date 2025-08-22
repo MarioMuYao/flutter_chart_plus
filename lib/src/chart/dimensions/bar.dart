@@ -349,8 +349,10 @@ mixin BarHorizontalMinx<T> on ChartBodyRender<T> {
     if (_instance.direction == Axis.vertical) {
       return ChartItemLayoutState()..xValue = xValue;
     }
-    num total = layout.yAxis[yAxisPosition].max;
-    if (total == 0) {
+    num max = layout.yAxis[yAxisPosition].max;
+    num min = layout.yAxis[yAxisPosition].min;
+    num value = max - min;
+    if (value == 0) {
       return ChartItemLayoutState()..xValue = xValue;
     }
     ChartItemLayoutState shape;
@@ -367,7 +369,7 @@ mixin BarHorizontalMinx<T> on ChartBodyRender<T> {
       );
       List<ChartItemLayoutState> childrenLayoutState = [];
       for (num yV in yValues) {
-        double present = yV / total;
+        double present = yV / value;
         double itemHeight = contentWidth * present;
         Rect rect = Rect.fromLTWH(left, top, itemHeight, _instance.itemWidth);
         ChartItemLayoutState stackShape = ChartItemLayoutState.rect(originRect: rect);
@@ -393,9 +395,13 @@ mixin BarHorizontalMinx<T> on ChartBodyRender<T> {
       );
       List<ChartItemLayoutState> childrenLayoutState = [];
       for (num yV in yValues) {
-        double present = yV / total;
+        double present = yV.abs() / value;
         double itemHeight = contentHeight * present;
-        double top = bottom - itemHeight;
+        double baseHeight = contentHeight * (min.abs() / value);
+        if (yV < 0) {
+          baseHeight -= itemHeight;
+        }
+        double top = bottom - itemHeight - baseHeight;
         Rect rect = Rect.fromLTWH(left, top, _instance.itemWidth, itemHeight);
         ChartItemLayoutState stackShape = ChartItemLayoutState.rect(originRect: rect);
         left = left + _instance.itemWidth + _instance.padding;
