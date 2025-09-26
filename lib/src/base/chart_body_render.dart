@@ -2,11 +2,11 @@ part of flutter_chart_plus;
 
 /// @author jd
 
-typedef ChartPosition<T> = num Function(T,int index);
+typedef ChartPosition<T> = num Function(T, int index);
+typedef ChartTextStyle<T> = TextStyle Function(T, int index);
 
 ///图表主体
 class ChartBodyRender<T> extends _ChartRender {
-
   ChartBodyRender({
     required this.data,
     this.yAxisPosition = 0,
@@ -23,7 +23,6 @@ class ChartBodyRender<T> extends _ChartRender {
 
   ///跟哪个y轴关联
   final int yAxisPosition;
-
 
   late ChartController controller;
 

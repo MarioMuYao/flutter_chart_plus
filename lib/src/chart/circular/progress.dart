@@ -6,6 +6,9 @@ class Progress<T> extends ChartBodyRender<T> {
     required super.data,
     required this.position,
     this.endPoint = false,
+    this.endPointBorderWidth = 0,
+    this.endPointBorderColor = Colors.black,
+    this.endPointColor = Colors.white,
     this.colors = colors10,
     this.startAngle = math.pi,
     this.strokeWidth = 1,
@@ -30,6 +33,12 @@ class Progress<T> extends ChartBodyRender<T> {
 
   ///结尾画小原点
   final bool endPoint;
+
+  final double endPointBorderWidth;
+
+  final Color endPointBorderColor;
+
+  final Color endPointColor;
 
   late final Paint _paint = Paint()
     ..style = PaintingStyle.stroke
@@ -74,7 +83,7 @@ class Progress<T> extends ChartBodyRender<T> {
     List<ChartItemLayoutState> childrenLayoutState = [];
     for (int i = 0; i < data.length; i++) {
       T item = data[i];
-      num po = position.call(item,i);
+      num po = position.call(item, i);
       if (lastXvs != null) {
         assert(lastXvs > po, '数据必须降序，否则会被挡住');
       }
@@ -111,7 +120,9 @@ class Progress<T> extends ChartBodyRender<T> {
         double endAngle = startAngle + sweepAngle;
         var startX = math.cos(endAngle) * radius + center.dx;
         var startY = math.sin(endAngle) * radius + center.dy;
-        canvas.drawCircle(Offset(startX, startY), strokeWidth / 2 - 2, _endPaint!);
+        canvas.drawCircle(
+            Offset(startX, startY), strokeWidth / 2 + endPointBorderWidth, _endPaint!..color = endPointBorderColor);
+        canvas.drawCircle(Offset(startX, startY), strokeWidth / 2, _endPaint!..color = endPointColor);
       }
       lastXvs = po;
     }
@@ -184,7 +195,7 @@ class CircularProgress<T> extends ChartBodyRender<T> {
     //绘制前面进度
     for (int i = 0; i < data.length; i++) {
       T item = data[i];
-      num po = position.call(item,i);
+      num po = position.call(item, i);
       if (lastXvs != null) {
         assert(lastXvs > po, '数据必须降序，否则会被挡住');
       }

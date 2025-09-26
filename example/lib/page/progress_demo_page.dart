@@ -65,8 +65,9 @@ class _ProgressDemoPageState extends State<ProgressDemoPage> {
                       arcDirection: ArcDirection.up,
                       charts: [
                         Progress(
-                          strokeWidth: 9,
+                          strokeWidth: 13,
                           endPoint: true,
+                          endPointBorderWidth: 4,
                           strokeCap: StrokeCap.round,
                           data: list,
                           position: (item, index) => item,

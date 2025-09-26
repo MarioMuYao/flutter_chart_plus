@@ -14,6 +14,7 @@ class Bar<T> extends ChartBodyRender<T> {
     this.valueFormatter,
     this.valueOffset = Offset.zero,
     this.textStyle = const TextStyle(fontSize: 10, color: Colors.black),
+    this.valueTextStyle,
     super.yAxisPosition,
     this.itemWidth = 20,
     this.color = Colors.blue,
@@ -50,6 +51,8 @@ class Bar<T> extends ChartBodyRender<T> {
 
   ///值文字样式
   final TextStyle textStyle;
+
+  final ChartTextStyle<T>? valueTextStyle;
 
   ///文案偏移
   final Offset valueOffset;
@@ -121,7 +124,7 @@ class Bar<T> extends ChartBodyRender<T> {
         canvas.drawRect(p.originRect!, _paint);
         //绘制文本
         if (layout.controlValue == 1 || !drawValueTextAfterAnimation) {
-          _drawValueText(canvas, layout, item, p);
+          _drawValueText(canvas, layout, item, p, index);
         }
       }
       childrenLayoutState.add(p);
@@ -129,12 +132,12 @@ class Bar<T> extends ChartBodyRender<T> {
     chartState.children = childrenLayoutState;
   }
 
-  void _drawValueText(Canvas canvas, ChartDimensionCoordinateState layout, T item, ChartItemLayoutState p) {
+  void _drawValueText(Canvas canvas, ChartDimensionCoordinateState layout, T item, ChartItemLayoutState p, int index) {
     String? valueString = valueFormatter?.call(item);
     if (valueString != null && valueString.isNotEmpty) {
       TextPainter legendTextPainter = TextPainter(
         textAlign: TextAlign.center,
-        text: TextSpan(text: valueString, style: textStyle),
+        text: TextSpan(text: valueString, style: valueTextStyle?.call(item, index) ?? textStyle),
         textDirection: TextDirection.ltr,
       )..layout(minWidth: 0, maxWidth: layout.size.width);
       Offset offset = Offset.zero;
