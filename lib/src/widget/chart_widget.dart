@@ -345,9 +345,11 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
         _controller.resetTooltip();
         _chartState.localPosition = null;
       },
-      onHorizontalDragUpdate: (details) {
-        _chartState.scrollByDelta(details.delta);
-      },
+      onHorizontalDragUpdate: _chartState is _ChartDimensionState
+          ? (details) {
+              _chartState.scrollByDelta(details.delta);
+            }
+          : null,
       onScaleStart: (ScaleStartDetails details) {
         _beforeZoom = _chartState.layout.zoom;
         _lastOffset = _chartState.layout.offset;
