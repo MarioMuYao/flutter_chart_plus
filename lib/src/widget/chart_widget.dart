@@ -227,6 +227,8 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
   late Offset _lastOffset;
   late ChartsState _chartState;
   ChartController get _controller => widget.chartCoordinateRender.controller;
+  AnimationController? _flingAnimationController;
+  Animation<double>? _flingAnimation;
 
   ///缓存所有chart的状态
   late List<ChartLayoutState> _allChartState;
@@ -268,6 +270,7 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
 
   @override
   void dispose() {
+    _flingAnimationController?.dispose();
     _animationController?.dispose();
     super.dispose();
   }
@@ -355,6 +358,28 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
       onHorizontalDragUpdate: _chartState is _ChartDimensionState
           ? (details) {
               _chartState.scrollByDelta(details.delta);
+            }
+          : null,
+      onHorizontalDragEnd: _chartState is _ChartDimensionState
+          ? (details) {
+              _flingAnimationController = AnimationController(
+                duration: const Duration(milliseconds: 600),
+                vsync: this,
+              );
+              _flingAnimation = null;
+              _flingAnimation = Tween<double>(
+                      begin: _chartState._layout.offset.dx,
+                      end: _chartState._layout.offset.dx - details.velocity.pixelsPerSecond.dx * 0.3)
+                  .animate(CurvedAnimation(parent: _flingAnimationController!.view, curve: Curves.decelerate));
+              _flingAnimation!.addListener(() {
+                double? value = _flingAnimation!.value;
+                _ChartDimensionState cdState = _chartState as _ChartDimensionState;
+                if (value <= 0 || value >= cdState.maxOffsetX) {
+                  _flingAnimationController!.stop();
+                }
+                _chartState.scroll(Offset(value, 0));
+              });
+              _flingAnimationController!.forward();
             }
           : null,
       onScaleStart: (ScaleStartDetails details) {
