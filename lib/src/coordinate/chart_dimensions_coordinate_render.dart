@@ -19,6 +19,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
     super.maxZoom,
     super.safeArea,
     super.outDraw,
+    super.reverse,
     super.animationDuration,
     super.tooltipBuilder,
     super.onClickChart,
@@ -211,9 +212,9 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
         String? text = xAxis.formatter?.call(i, xValue);
         if (text != null) {
           bool adjustLast = (i == count);
-          bool adjustFirst = (i == 0);
+          // bool adjustFirst = (i == 0);
           oft = _drawXTextPaint(xAxis, canvas, text, state, point.dx, point.dy + xAxis.padding,
-              adjustFirst: adjustFirst, adjustLast: adjustLast);
+              adjustFirst: false, adjustLast: adjustLast);
         }
       }
       //根据调整过的位置再比较

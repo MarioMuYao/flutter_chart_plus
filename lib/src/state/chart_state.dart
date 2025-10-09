@@ -34,6 +34,8 @@ abstract class ChartsState extends ChangeNotifier {
   ///不在屏幕内是否绘制 默认不绘制
   final bool outDraw;
 
+  final bool reverse;
+
   ///是否动画
   late bool animal;
 
@@ -42,11 +44,13 @@ abstract class ChartsState extends ChangeNotifier {
 
   ChartsState({
     this.outDraw = false,
+    this.reverse = false,
     required this.chartsState,
   });
 
   factory ChartsState.coordinate({
     bool outDraw = false,
+    bool reverse = false,
     double controlValue = 1,
     required Size size,
     required EdgeInsets margin,
@@ -60,6 +64,7 @@ abstract class ChartsState extends ChangeNotifier {
         margin: margin,
         padding: padding,
         outDraw: outDraw,
+        reverse: reverse,
         chartsState: chartsState,
         coordinate: coordinate,
         controlValue: controlValue,

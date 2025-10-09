@@ -231,6 +231,7 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
   ///缓存所有chart的状态
   late List<ChartLayoutState> _allChartState;
   AnimationController? _animationController;
+  bool? _init;
 
   @override
   void initState() {
@@ -241,10 +242,11 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
       });
     }
     _initState();
+    super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _startAnimal();
     });
-    super.initState();
   }
 
   void _initState() {
@@ -278,10 +280,14 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
   @override
   void didUpdateWidget(covariant _ChartCoreWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+    Offset offset = _chartState.layout.offset;
     _initState();
     if (widget.animalDidUpdate) {
       _startAnimal();
     }
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _chartState.offset = offset;
+    });
   }
 
   DateTime? _lastAnimalTime;
@@ -315,6 +321,7 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
       margin: widget.chartCoordinateRender.margin,
       padding: widget.chartCoordinateRender.padding,
       outDraw: widget.chartCoordinateRender.outDraw,
+      reverse: widget.chartCoordinateRender.reverse,
       chartsState: _allChartState,
       coordinate: widget.chartCoordinateRender,
       controlValue: _animationController?.value ?? 1,
@@ -379,6 +386,17 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
           painter: _ChartPainter(
             chart: widget.chartCoordinateRender,
             state: _chartState,
+            onPaint: () {
+              if (_init == null) {
+                if (_chartState is _ChartDimensionState && widget.chartCoordinateRender.reverse) {
+                  _ChartDimensionState cdState = _chartState as _ChartDimensionState;
+                  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                    cdState.offset = Offset(cdState.maxOffsetX, cdState.maxOffsetY);
+                  });
+                }
+              }
+              _init ??= true;
+            },
           ),
         ),
       ),
@@ -457,10 +475,12 @@ class _ChartPainter extends CustomPainter {
   _ChartPainter({
     required this.chart,
     required this.state,
+    this.onPaint,
   }) : super(repaint: state);
 
   final ChartCoordinateRender chart;
   final ChartsState state;
+  final VoidCallback? onPaint;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -469,6 +489,7 @@ class _ChartPainter extends CustomPainter {
     canvas.clipRect(clipRect);
     state.init();
     chart.paint(canvas, state);
+    onPaint?.call();
   }
 
   @override

@@ -2,8 +2,6 @@ part of flutter_chart_plus;
 
 ///坐标系布局信息
 abstract class ChartCoordinateState {
-
-
   ChartCoordinateState({
     required this.size,
     required this.margin,

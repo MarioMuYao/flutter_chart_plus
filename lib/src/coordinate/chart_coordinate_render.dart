@@ -5,7 +5,6 @@ part of flutter_chart_plus;
 
 ///十字准星样式
 class CrossHairStyle {
-
   const CrossHairStyle({
     this.color = Colors.blue,
     this.horizontalShow = true,
@@ -28,7 +27,6 @@ typedef ChartTooltipFormatter = InlineSpan? Function(List<ChartLayoutState>);
 
 ///坐标渲染器， 每次刷新会重新构造，切忌不要存放状态数据，数据都在state里面
 abstract class ChartCoordinateRender {
-
   ChartCoordinateRender({
     required this.margin,
     required this.padding,
@@ -37,13 +35,13 @@ abstract class ChartCoordinateRender {
     this.minZoom,
     this.maxZoom,
     this.outDraw = false,
+    this.reverse = false,
     this.animationDuration,
     this.backgroundAnnotations,
     this.foregroundAnnotations,
     this.safeArea,
     this.onClickChart,
   });
-
 
   ///图形外边距，用于控制坐标轴的外边距
   final EdgeInsets margin;
@@ -63,6 +61,8 @@ abstract class ChartCoordinateRender {
 
   ///安全区域
   final EdgeInsets? safeArea;
+
+  final bool reverse;
 
   ///用widget弹框来处理点击,返回PreferredSizeWidget便于边界碰撞计算，如果不在乎边界问题，可以随便设置，值越靠近真实宽高边界检测越准
   final TooltipWidgetBuilder? tooltipBuilder;

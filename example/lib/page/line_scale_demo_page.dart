@@ -98,6 +98,7 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
             height: 200,
             child: ChartWidget(
               coordinateRender: ChartDimensionsCoordinateRender(
+                reverse: true,
                 margin: const EdgeInsets.only(left: 30, top: 10, right: 0, bottom: 25),
                 padding: const EdgeInsets.only(left: 30, top: 0, right: 0, bottom: 0),
                 // zoomVertical: true,
@@ -121,7 +122,7 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
                 ],
                 xAxis: XAxis(
                   count: 7,
-                  max: 15,
+                  max: 14,
                   zoom: true,
                   drawDivider: true,
                   divideCount: (zoom) => zoom.toInt(),
@@ -143,7 +144,7 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
                   RegionAnnotation(positions: [4.4, 5.3]),
                   LabelAnnotation(
                     positions: [3.3, 0],
-                    text: '夜晚',
+                    text: '夜晚1',
                     textAlign: TextAlign.end,
                     minZoomVisible: 1,
                     maxZoomVisible: 4,

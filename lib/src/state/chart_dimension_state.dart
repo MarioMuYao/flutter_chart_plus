@@ -2,7 +2,6 @@ part of flutter_chart_plus;
 
 ///象限坐标系信息
 class ChartDimensionCoordinateState extends ChartCoordinateState {
-
   ChartDimensionCoordinateState({
     required super.size,
     required super.margin,
@@ -22,7 +21,6 @@ class ChartDimensionCoordinateState extends ChartCoordinateState {
   ///是否反转
   final bool invert;
 
-
   @override
   void init() {
     //初始化配置
@@ -32,7 +30,9 @@ class ChartDimensionCoordinateState extends ChartCoordinateState {
     assert(xAxis.count > 0, "x轴数量必须大于0");
     assert(xAxis.interval > 0, "x轴数量必须大于0");
     //每格的宽度，用于控制一屏最多显示个数
-    double density = invert ? (height - content.vertical) / count / xAxis.interval : (width - content.horizontal) / count / xAxis.interval;
+    double density = invert
+        ? (height - content.vertical) / count / xAxis.interval
+        : (width - content.horizontal) / count / xAxis.interval;
     xAxis.fixedDensity = density;
     //x轴密度 即1 value 等于多少尺寸
     if (xAxis.zoom) {
@@ -76,6 +76,7 @@ class _ChartDimensionState extends ChartsState {
     required EdgeInsets margin,
     required EdgeInsets padding,
     super.outDraw,
+    super.reverse,
     required super.chartsState,
     required ChartDimensionsCoordinateRender coordinate,
     double controlValue = 1,
@@ -103,15 +104,8 @@ class _ChartDimensionState extends ChartsState {
     scroll(newOffset);
   }
 
-  @override
-  void scroll(Offset offset) {
+  double get maxOffsetX {
     ChartDimensionCoordinateState layout = super.layout as ChartDimensionCoordinateState;
-    //校准偏移，不然缩小后可能起点都在中间了，或者无限滚动
-    double x = offset.dx;
-    // double y = newOffset.dy;
-    if (x < 0) {
-      x = 0;
-    }
     //放大的场景  offset会受到zoom的影响，所以这里的宽度要先剔除zoom的影响再比较
     double chartContentWidth = layout.xAxis.density * layout.xAxis.max;
     double chartViewPortWidth = layout.size.width - layout.content.horizontal;
@@ -119,18 +113,14 @@ class _ChartDimensionState extends ChartsState {
     double maxOffset = (chartContentWidth - chartViewPortWidth);
     if (maxOffset < 0) {
       //内容小于0
-      x = 0;
-    } else if (x > maxOffset) {
-      x = maxOffset;
+      maxOffset = 0;
     }
+    return maxOffset;
+  }
 
-    //y变化
-    double y = 0;
+  double get maxOffsetY {
+    ChartDimensionCoordinateState layout = super.layout as ChartDimensionCoordinateState;
     if (layout.invert) {
-      y = offset.dy;
-      if (y < 0) {
-        y = 0;
-      }
       //放大的场景  offset会受到zoom的影响，所以这里的宽度要先剔除zoom的影响再比较
       double chartContentWidth = layout.xAxis.density * layout.xAxis.max;
       double chartViewPortWidth = layout.size.height - layout.content.vertical;
@@ -138,11 +128,15 @@ class _ChartDimensionState extends ChartsState {
       double maxOffset = (chartContentWidth - chartViewPortWidth);
       if (maxOffset < 0) {
         //内容小于0
-        y = 0;
-      } else if (y > maxOffset) {
-        y = maxOffset;
+        maxOffset = 0;
       }
+      return maxOffset;
     }
-    this.offset = Offset(x, y);
+    return 0;
+  }
+
+  @override
+  void scroll(Offset offset) {
+    this.offset = Offset(offset.dx.clamp(0, maxOffsetX), offset.dy.clamp(0, maxOffsetY));
   }
 }
