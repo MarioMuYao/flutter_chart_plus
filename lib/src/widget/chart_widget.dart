@@ -279,6 +279,13 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
 
   @override
   void didUpdateWidget(covariant _ChartCoreWidget oldWidget) {
+    if (oldWidget.chartCoordinateRender.charts.length != widget.chartCoordinateRender.charts.length ||
+        (oldWidget.chartCoordinateRender.charts.isNotEmpty &&
+            widget.chartCoordinateRender.charts.isNotEmpty &&
+            oldWidget.chartCoordinateRender.charts[0].data.length !=
+                widget.chartCoordinateRender.charts[0].data.length)) {
+      _init = null;
+    }
     super.didUpdateWidget(oldWidget);
     Offset offset = _chartState.layout.offset;
     _initState();
