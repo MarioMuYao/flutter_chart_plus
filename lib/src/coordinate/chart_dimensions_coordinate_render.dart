@@ -211,10 +211,10 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
       if (xAxis.drawLabel) {
         String? text = xAxis.formatter?.call(i, xValue);
         if (text != null) {
-          bool adjustLast = (i == count);
+          // bool adjustLast = (i == count);
           // bool adjustFirst = (i == 0);
           oft = _drawXTextPaint(xAxis, canvas, text, state, point.dx, point.dy + xAxis.padding,
-              adjustFirst: false, adjustLast: adjustLast);
+              adjustFirst: false, adjustLast: false);
         }
       }
       //根据调整过的位置再比较
