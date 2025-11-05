@@ -18,7 +18,9 @@ class XAxis {
     this.drawLabel = true,
     this.zoom = false,
     this.lineColor = const Color(0x99cccccc),
+    this.radians,
     this.textStyle = const TextStyle(fontSize: 12, color: Colors.grey),
+    this.offsetAnchor,
     this.drawDivider = false,
     this.divideCount,
     num? max,
@@ -58,8 +60,13 @@ class XAxis {
   ///是否绘制最下面一行的线
   bool drawLine;
 
+  ///旋转角度
+  final double? radians;
+
   ///文字颜色
   final TextStyle textStyle;
+
+  final Offset Function(Size)? offsetAnchor;
 
   ///最边上的线的颜色
   final Color lineColor;

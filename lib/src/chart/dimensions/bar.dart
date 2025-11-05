@@ -13,6 +13,7 @@ class Bar<T> extends ChartBodyRender<T> {
     required this.position,
     this.valueFormatter,
     this.valueOffset = Offset.zero,
+    this.valueOffsetAnchor,
     this.textStyle = const TextStyle(fontSize: 10, color: Colors.black),
     this.valueTextStyle,
     super.yAxisPosition,
@@ -56,6 +57,8 @@ class Bar<T> extends ChartBodyRender<T> {
 
   ///文案偏移
   final Offset valueOffset;
+
+  final Offset Function(Size)? valueOffsetAnchor;
 
   ///动画结束后绘制文本
   final bool drawValueTextAfterAnimation;
@@ -141,13 +144,13 @@ class Bar<T> extends ChartBodyRender<T> {
         textDirection: TextDirection.ltr,
       )..layout(minWidth: 0, maxWidth: layout.size.width);
       Offset offset = Offset.zero;
+      Offset vOffset = valueOffset + (valueOffsetAnchor?.call(legendTextPainter.size) ?? Offset.zero);
       if (layout.invert) {
         offset = p.originRect!.centerRight;
-        offset = offset.translate(valueOffset.dx, -legendTextPainter.height / 2 + valueOffset.dy);
+        offset = offset.translate(vOffset.dx, -legendTextPainter.height / 2 + vOffset.dy);
       } else {
         offset = p.originRect!.topCenter;
-        offset =
-            offset.translate(-legendTextPainter.width / 2 + valueOffset.dx, -legendTextPainter.height + valueOffset.dy);
+        offset = offset.translate(-legendTextPainter.width / 2 + vOffset.dx, -legendTextPainter.height + vOffset.dy);
       }
       legendTextPainter.paint(canvas, offset);
     }
@@ -218,7 +221,12 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
     this.hotColor,
     this.valuesFormatter,
     this.textStyle = const TextStyle(fontSize: 10, color: Colors.black),
+    this.valuesOffset = Offset.zero,
+    this.valuesOffsetAnchor,
+    this.valueFormatter,
+    this.valueTextStyle = const TextStyle(fontSize: 10, color: Colors.black),
     this.valueOffset = Offset.zero,
+    this.valueOffsetAnchor,
     this.drawValueTextAfterAnimation = true,
   });
 
@@ -260,7 +268,20 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
   final TextStyle textStyle;
 
   ///文案偏移
+  final Offset valuesOffset;
+
+  final Offset Function(Size)? valuesOffsetAnchor;
+
+  ///值文案格式化 不要使用过于耗时的方法
+  final BarValueFormatter<T>? valueFormatter;
+
+  ///值文字样式
+  final TextStyle valueTextStyle;
+
+  ///文案偏移
   final Offset valueOffset;
+
+  final Offset Function(Size)? valueOffsetAnchor;
 
   ///动画结束后绘制文本
   final bool drawValueTextAfterAnimation;
@@ -334,13 +355,39 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
         }
         stackIndex++;
       }
-
+      if (direction == Axis.vertical && p.originRect != null) {
+        if (layout.controlValue == 1 || !drawValueTextAfterAnimation) {
+          _drawMainValueText(canvas, layout, item, p, index);
+        }
+      }
       //绘制热区
       if (hotColor != null && p.originRect != null && layout.controlValue == 1) {
         canvas.drawRect(p.originRect!, _hotPaint..color = hotColor!);
       }
     }
     chartState.children = childrenLayoutState;
+  }
+
+  void _drawMainValueText(
+      Canvas canvas, ChartDimensionCoordinateState layout, T item, ChartItemLayoutState p, int index) {
+    String? valueString = valueFormatter?.call(item);
+    if (valueString != null && valueString.isNotEmpty) {
+      TextPainter legendTextPainter = TextPainter(
+        textAlign: TextAlign.center,
+        text: TextSpan(text: valueString, style: valueTextStyle),
+        textDirection: TextDirection.ltr,
+      )..layout(minWidth: 0, maxWidth: layout.size.width);
+      Offset offset = Offset.zero;
+      Offset vOffset = valueOffset + (valueOffsetAnchor?.call(legendTextPainter.size) ?? Offset.zero);
+      if (layout.invert) {
+        offset = p.originRect!.centerRight;
+        offset = offset.translate(vOffset.dx, -legendTextPainter.height / 2 + vOffset.dy);
+      } else {
+        offset = p.originRect!.topCenter;
+        offset = offset.translate(-legendTextPainter.width / 2 + vOffset.dx, -legendTextPainter.height + vOffset.dy);
+      }
+      legendTextPainter.paint(canvas, offset);
+    }
   }
 }
 
@@ -429,13 +476,14 @@ mixin BarHorizontalMinx<T> on ChartBodyRender<T> {
         textDirection: TextDirection.ltr,
       )..layout(minWidth: 0, maxWidth: layout.size.width);
       Offset offset = Offset.zero;
+      Offset vOffset =
+          _instance.valuesOffset + (_instance.valuesOffsetAnchor?.call(legendTextPainter.size) ?? Offset.zero);
       if (layout.invert) {
         offset = p.originRect!.centerRight;
-        offset = offset.translate(_instance.valueOffset.dx, -legendTextPainter.height / 2 + _instance.valueOffset.dy);
+        offset = offset.translate(vOffset.dx, -legendTextPainter.height / 2 + vOffset.dy);
       } else {
         offset = p.originRect!.topCenter;
-        offset = offset.translate(-legendTextPainter.width / 2 + _instance.valueOffset.dx,
-            -legendTextPainter.height + _instance.valueOffset.dy);
+        offset = offset.translate(-legendTextPainter.width / 2 + vOffset.dx, -legendTextPainter.height + vOffset.dy);
       }
       legendTextPainter.paint(canvas, offset);
     }
@@ -462,9 +510,6 @@ mixin BarVerticalBarMinx<T> on ChartBodyRender<T>, BarHorizontalMinx<T> {
       top = layout.transform.withYScroll(top);
       double left = layout.left;
       double contentWidth = layout.contentWidth;
-      shape = ChartItemLayoutState.rect(
-        originRect: Rect.fromLTWH(left, top, contentWidth, _instance.itemWidth),
-      );
       List<ChartItemLayoutState> childrenLayoutState = [];
       for (num yV in yValues) {
         double present = yV / total;
@@ -476,6 +521,14 @@ mixin BarVerticalBarMinx<T> on ChartBodyRender<T>, BarHorizontalMinx<T> {
         childrenLayoutState.add(stackShape);
         left = left + itemHeight;
       }
+      double? right = childrenLayoutState
+          .reduce((a, b) => (a.originRect?.right ?? 0) > (b.originRect?.right ?? 0) ? a : b)
+          .originRect
+          ?.right;
+      shape = ChartItemLayoutState.rect(
+        originRect:
+            Rect.fromLTWH(layout.left, top, right != null ? right - layout.left : layout.top, _instance.itemWidth),
+      );
       shape.children = childrenLayoutState;
       shape.xValue = xValue;
     } else {
@@ -483,9 +536,6 @@ mixin BarVerticalBarMinx<T> on ChartBodyRender<T>, BarHorizontalMinx<T> {
       double contentHeight = layout.contentHeight;
       double left = layout.left + layout.xAxis.density * xValue - _instance.itemWidth / 2;
       left = layout.transform.withXScroll(left);
-      shape = ChartItemLayoutState.rect(
-        originRect: Rect.fromLTWH(left, layout.top, _instance.itemWidth, contentHeight),
-      );
       List<ChartItemLayoutState> childrenLayoutState = [];
       for (num yV in yValues) {
         double present = yV / total;
@@ -498,6 +548,17 @@ mixin BarVerticalBarMinx<T> on ChartBodyRender<T>, BarHorizontalMinx<T> {
         childrenLayoutState.add(stackShape);
         bottom = top;
       }
+      shape = ChartItemLayoutState.rect(
+        originRect: Rect.fromLTWH(
+            left,
+            childrenLayoutState
+                    .reduce((a, b) => (a.originRect?.top ?? 0) < (b.originRect?.top ?? 0) ? a : b)
+                    .originRect
+                    ?.top ??
+                layout.top,
+            _instance.itemWidth,
+            contentHeight),
+      );
       shape.children = childrenLayoutState;
       shape.xValue = xValue;
     }
@@ -516,14 +577,15 @@ mixin BarVerticalBarMinx<T> on ChartBodyRender<T>, BarHorizontalMinx<T> {
         textDirection: TextDirection.ltr,
       )..layout(minWidth: 0, maxWidth: layout.size.width);
       Offset offset = Offset.zero;
+      Offset vOffset =
+          _instance.valuesOffset + (_instance.valuesOffsetAnchor?.call(legendTextPainter.size) ?? Offset.zero);
       if (layout.invert) {
         offset = p.originRect!.center;
-        offset = offset.translate(-legendTextPainter.width / 2 + _instance.valueOffset.dx,
-            -legendTextPainter.height / 2 + _instance.valueOffset.dy);
+        offset =
+            offset.translate(-legendTextPainter.width / 2 + vOffset.dx, -legendTextPainter.height / 2 + vOffset.dy);
       } else {
         offset = p.originRect!.center;
-        offset = offset.translate(_instance.itemWidth / 2 + 2 + _instance.valueOffset.dx,
-            -legendTextPainter.height / 2 + _instance.valueOffset.dy);
+        offset = offset.translate(_instance.itemWidth / 2 + vOffset.dx, -legendTextPainter.height / 2 + vOffset.dy);
       }
       legendTextPainter.paint(canvas, offset);
     }

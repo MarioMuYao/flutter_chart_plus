@@ -1,6 +1,7 @@
 part of flutter_chart_plus;
 
 typedef LinePosition<T> = List<num> Function(T);
+typedef LineValuesFormatter<T> = List<String> Function(T);
 
 /// @author JD
 class Line<T> extends ChartBodyRender<T> with NormalLineMixin<T>, AnimalLineMixin<T> {
@@ -14,9 +15,15 @@ class Line<T> extends ChartBodyRender<T> with NormalLineMixin<T>, AnimalLineMixi
     this.dotColors,
     this.dotRadius = 2,
     this.strokeWidth = 1,
+    this.dashArray,
     this.isHollow = false,
     this.filled = false,
     this.isCurve = false,
+    this.valuesFormatter,
+    this.textStyle = const TextStyle(fontSize: 10, color: Colors.black),
+    this.valueOffset = Offset.zero,
+    this.valueOffsetAnchor,
+    this.drawValueTextAfterAnimation = true,
     this.operation,
     this.async = false,
   });
@@ -46,11 +53,28 @@ class Line<T> extends ChartBodyRender<T> with NormalLineMixin<T>, AnimalLineMixi
   ///线宽
   final double strokeWidth;
 
+  ///虚线
+  final List<double>? dashArray;
+
   ///是否填充颜色  true：填充，false：不填充  默认false
   final bool? filled;
 
   ///是否是曲线  默认false
   final bool isCurve;
+
+  ///值文案格式化 不要使用过于耗时的方法
+  final LineValuesFormatter<T>? valuesFormatter;
+
+  ///值文字样式
+  final TextStyle textStyle;
+
+  ///文案偏移
+  final Offset valueOffset;
+
+  final Offset Function(Size)? valueOffsetAnchor;
+
+  ///动画结束后绘制文本
+  final bool drawValueTextAfterAnimation;
 
   ///路径之间的处理规则
   final PathOperation? operation;
@@ -97,10 +121,12 @@ class Line<T> extends ChartBodyRender<T> with NormalLineMixin<T>, AnimalLineMixi
 
   ///画线
   void _drawLine(Canvas canvas, Path path, int index) {
+    Path linePath =
+        dashArray != null ? dashPath(path, dashArray: CircularIntervalList(dashArray!), dashOffset: null) : path;
     if (shaders != null && filled == false) {
-      canvas.drawPath(path, _linePaint..shader = shaders![index]);
+      canvas.drawPath(linePath, _linePaint..shader = shaders![index]);
     } else {
-      canvas.drawPath(path, _linePaint..color = colors[index]);
+      canvas.drawPath(linePath, _linePaint..color = colors[index]);
     }
   }
 
@@ -125,6 +151,28 @@ class Line<T> extends ChartBodyRender<T> with NormalLineMixin<T>, AnimalLineMixi
       _dotPaint.style = PaintingStyle.fill;
     }
     canvas.drawCircle(point, dotRadius, _dotPaint..color = color);
+  }
+
+  ///文字
+  void _drawValueText(Canvas canvas, ChartDimensionCoordinateState layout, String? text, ChartItemLayoutState p) {
+    if (text == null) {
+      return;
+    }
+    TextPainter legendTextPainter = TextPainter(
+      textAlign: TextAlign.center,
+      text: TextSpan(text: text, style: _instance.textStyle),
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: layout.size.width);
+    Offset offset = Offset.zero;
+    Offset vOffset = _instance.valueOffset + (_instance.valueOffsetAnchor?.call(legendTextPainter.size) ?? Offset.zero);
+    if (layout.invert) {
+      offset = p.originRect!.centerRight;
+      offset = offset.translate(vOffset.dx, -legendTextPainter.height / 2 + vOffset.dy);
+    } else {
+      offset = p.originRect!.topCenter;
+      offset = offset.translate(-legendTextPainter.width / 2 + vOffset.dx, -legendTextPainter.height + vOffset.dy);
+    }
+    legendTextPainter.paint(canvas, offset);
   }
 
   ///开启后可查看热区是否正确
@@ -245,7 +293,7 @@ mixin NormalLineMixin<T> on ChartBodyRender<T> {
 
         childLayoutState.setOriginRect(
             Rect.fromCenter(center: currentPoint, width: _instance.dotRadius, height: _instance.dotRadius));
-        childLayoutState.index = index;
+        childLayoutState.index = valueIndex;
         childLayoutState.layout = layout;
         childLayoutState.xAxis = layout.xAxis;
         childLayoutState.yAxis = layout.yAxis;
@@ -340,14 +388,14 @@ mixin NormalLineMixin<T> on ChartBodyRender<T> {
         Rect currentRect =
             Rect.fromLTRB(xPos - _instance.dotRadius, layout.top, xPos + _instance.dotRadius, layout.bottom);
         shape.setOriginRect(currentRect);
-        if (!state.outDraw && xPos < 0) {
-          // debugPrint('1-第${shape.index ?? 0 + 1} 个点$currentRect超出去 不需要处理');
-          continue;
-        }
-        if (!state.outDraw && xPos > layout.size.width) {
-          // debugPrint('2-第${shape.index ?? 0 + 1} 个点 $currentRect超出去 停止处理');
-          break;
-        }
+        // if (!state.outDraw && xPos < 0) {
+        //   // debugPrint('1-第${shape.index ?? 0 + 1} 个点$currentRect超出去 不需要处理');
+        //   continue;
+        // }
+        // if (!state.outDraw && xPos > layout.size.width) {
+        //   // debugPrint('2-第${shape.index ?? 0 + 1} 个点 $currentRect超出去 停止处理');
+        //   break;
+        // }
         for (ChartItemLayoutState childLayoutState in children) {
           double yPos = layout.getPosForY(layout.yAxis[yAxisPosition].getHeight(childLayoutState.yValue!));
           Offset currentPoint = Offset(xPos, yPos);
@@ -356,6 +404,18 @@ mixin NormalLineMixin<T> on ChartBodyRender<T> {
           //画点
           _instance._drawPoint(canvas, currentPoint, dotColorList[childIndex]);
           childIndex++;
+        }
+      }
+    }
+
+    if (layout.controlValue == 1 || !_instance.drawValueTextAfterAnimation) {
+      List<ChartItemLayoutState> shapeList = chartState.children;
+      for (ChartItemLayoutState shape in shapeList) {
+        List<ChartItemLayoutState> children = shape.children;
+        for (ChartItemLayoutState childLayoutState in children) {
+          List<String>? valueString = _instance.valuesFormatter?.call(data[shape.index ?? 0]);
+          _instance._drawValueText(canvas, state.layout as ChartDimensionCoordinateState,
+              valueString?[childLayoutState.index ?? 0], childLayoutState);
         }
       }
     }
@@ -528,6 +588,16 @@ mixin AnimalLineMixin<T> on ChartBodyRender<T> {
     //  line._showHotRect(canvas);
     //开始绘制了
     _drawLineWithAnimal(state, canvas, pathMap);
+
+    if (layout.controlValue == 1 || !_instance.drawValueTextAfterAnimation) {
+      List<ChartItemLayoutState> shapeList = chartState.children;
+      for (ChartItemLayoutState shape in shapeList) {
+        List<ChartItemLayoutState> children = shape.children;
+        for (ChartItemLayoutState childLayoutState in children) {
+          _instance._drawValueText(canvas, state.layout as ChartDimensionCoordinateState, 'aaaa', childLayoutState);
+        }
+      }
+    }
   }
 
   void _drawLineWithAnimal(ChartsState state, Canvas canvas, Map<int, LineInfo> pathMap) {

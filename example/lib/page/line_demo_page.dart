@@ -162,6 +162,8 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                             print('======');
                           },
                         ),
+                        VerticalRegionAnnotation(position: 340, direction: 1, color: Colors.red),
+                        VerticalRegionAnnotation(position: 260, direction: -1, color: Colors.green),
                       ],
                       margin: const EdgeInsets.only(left: 40, top: 5, right: 0, bottom: 30),
                       //提示的文案信息
@@ -450,5 +452,96 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
         ),
       ),
     );
+  }
+}
+
+class VerticalRegionAnnotation extends Annotation {
+  VerticalRegionAnnotation({
+    super.fixed = true,
+    super.minZoomVisible,
+    super.maxZoomVisible,
+    this.direction = 1,
+    required this.position,
+    this.color = const Color(0xFFF5F5F5),
+    super.onTap,
+  });
+
+  final int direction;
+  final num position;
+  final Color color;
+
+  Paint? _paint;
+  Rect? _rect;
+
+  @override
+  void init(ChartsState state) {
+    super.init(state);
+
+    ChartCoordinateState layout = state.layout;
+    if (layout is ChartDimensionCoordinateState) {
+      num yValue = position;
+      double yPos = layout.yAxis[yAxisPosition].getHeight(yValue, fixed);
+      yPos = layout.transform.transformY(yPos, containPadding: true);
+      _paint = Paint()
+        ..color = color
+        ..style = PaintingStyle.fill
+        ..strokeWidth = 1;
+      _rect = direction > 0
+          ? Rect.fromLTRB(layout.padding.left, layout.top, layout.size.width - layout.padding.right, yPos)
+          : Rect.fromLTRB(layout.padding.left, yPos, layout.size.width - layout.padding.right, layout.bottom);
+    }
+  }
+
+  @override
+  void draw(Canvas canvas, ChartsState state) {
+    if (!isNeedDraw(state)) {
+      return;
+    }
+    if (_rect != null && _paint != null) {
+      canvas.drawRect(_rect!, _paint!);
+    }
+  }
+}
+
+class ProgressRegionAnnotation extends Annotation {
+  ProgressRegionAnnotation({
+    super.fixed = true,
+    super.minZoomVisible,
+    super.maxZoomVisible,
+    required this.position,
+    this.color = const Color(0xFFF5F5F5),
+    super.onTap,
+  });
+
+  final num position;
+  final Color color;
+
+  Paint? _paint;
+  Rect? _rect;
+
+  @override
+  void init(ChartsState state) {
+    super.init(state);
+
+    ChartCoordinateState layout = state.layout;
+    if (layout is ChartDimensionCoordinateState) {
+      num yValue = position;
+      double yPos = layout.yAxis[yAxisPosition].getHeight(yValue, fixed);
+      yPos = layout.transform.transformY(yPos, containPadding: true);
+      _paint = Paint()
+        ..color = color
+        ..style = PaintingStyle.fill
+        ..strokeWidth = 1;
+    }
+  }
+
+  @override
+  void draw(Canvas canvas, ChartsState state) {
+    if (!isNeedDraw(state)) {
+      return;
+    }
+    if (_rect != null && _paint != null) {
+      canvas.drawRect(_rect!, _paint!);
+    }
   }
 }

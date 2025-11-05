@@ -99,11 +99,11 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
         //绘制文本
         if (yA.drawLabel) {
           String text = yA.formatter?.call(i, min + vv) ?? '${min + vv}';
-          if (i == count) {
-            _drawYTextPaint(yA, canvas, text, yAxisIndex > 0, point.dx + yA.padding, point.dy, false);
-          } else {
-            _drawYTextPaint(yA, canvas, text, yAxisIndex > 0, point.dx + yA.padding, point.dy, true);
-          }
+          // if (i == count) {
+          //   _drawYTextPaint(yA, canvas, text, yAxisIndex > 0, point.dx + yA.padding, point.dy, false);
+          // } else {
+          _drawYTextPaint(yA, canvas, text, yAxisIndex > 0, point.dx + yA.padding, point.dy, true);
+          // }
         }
         //绘制格子线  先放一起，以免再次遍历
         if (yA.drawGrid) {
@@ -309,11 +309,22 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
     } else if (adjustLast && (left + textWidth / 2) > (state.layout.size.width - state.layout.margin.right)) {
       x = left - textWidth;
     }
-    Offset offset = Offset(x, top);
+    double? radians = axis.radians;
+    Offset offset = Offset(x, top) + (xAxis.offsetAnchor?.call(textPainter.size) ?? Offset.zero);
+    if (radians != null) {
+      Offset pivot = textPainter.size.center(offset);
+      canvas.save();
+      canvas.translate(pivot.dx, pivot.dy);
+      canvas.rotate(radians);
+      canvas.translate(-pivot.dx, -pivot.dy);
+    }
     textPainter.paint(
       canvas,
       offset,
     ); // 进行绘制
+    if (radians != null) {
+      canvas.restore();
+    }
     return offset;
   }
 

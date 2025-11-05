@@ -148,6 +148,7 @@ class _TweenBarChartDemoPageState extends State<TweenBarChartDemoPage> {
                           data: dataList,
                           position: (item, _) => parserDateTimeToDayValue(item['time'] as DateTime, startTime),
                           value: (item) => item['value1'],
+                          valueFormatter: (item) => 'aa',
                         ),
                       ],
                     ),

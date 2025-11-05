@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:example/page/extension_datetime.dart';
@@ -94,11 +95,26 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
           const SizedBox(
             height: 10,
           ),
+          Container(
+            color: Colors.green,
+            child: SizedBox.square(
+              dimension: 96,
+              child: Transform.scale(
+                scaleX: -1, // 水平翻转
+                child: CircularProgressIndicator(
+                  strokeAlign: CircularProgressIndicator.strokeAlignInside,
+                  strokeWidth: 10,
+                  strokeCap: StrokeCap.round,
+                  backgroundColor: Colors.red,
+                  value: 0.84,
+                ),
+              ),
+            ),
+          ),
           SizedBox(
             height: 200,
             child: ChartWidget(
               coordinateRender: ChartDimensionsCoordinateRender(
-                reverse: true,
                 margin: const EdgeInsets.only(left: 30, top: 10, right: 0, bottom: 25),
                 padding: const EdgeInsets.only(left: 30, top: 0, right: 0, bottom: 0),
                 // zoomVertical: true,
@@ -116,7 +132,7 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
                 yAxis: [
                   YAxis(
                     min: -600,
-                    max: 400,
+                    max: 600,
                     drawGrid: true,
                   ),
                 ],
@@ -138,6 +154,8 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
                           .toStringWithFormat(format: 'HH:mm');
                     }
                   },
+                  radians: -45 * (pi / 180),
+                  offsetAnchor: (size) => Offset(0, cos(45 * (pi / 180)) * size.width / 2),
                 ),
                 backgroundAnnotations: [
                   RegionAnnotation(positions: [2.4, 3.3]),
@@ -168,14 +186,25 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
                 ],
                 charts: [
                   Line(
+                    colors: [Colors.red, Colors.orange, Colors.green],
                     isCurve: true,
-                    dotRadius: 2,
-                    isHollow: true,
+                    dotRadius: 3,
+                    // isHollow: true,
+                    dashArray: [4, 4],
+                    strokeWidth: 2,
                     data: dataList,
                     position: (item, _) => parserDateTimeToDayValue(item['time'] as DateTime, startTime),
                     values: (item) => [
                       item['value1'] as num,
+                      item['value2'] as num,
+                      item['value3'] as num,
                     ],
+                    valuesFormatter: (item) => [
+                      '${item['value1']}',
+                      '${item['value2']}',
+                      '${item['value3']}',
+                    ],
+                    valueOffsetAnchor: (size) => Offset(0, size.height + 3),
                   ),
                 ],
               ),

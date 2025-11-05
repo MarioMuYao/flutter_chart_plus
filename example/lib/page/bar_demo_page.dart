@@ -107,7 +107,9 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                         max: 30,
                         zoom: true,
                         formatter: (index, value) {
-                          return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd');
+                          // return startTime.add(Duration(days: index.toInt())).toStringWithFormat(format: 'dd');
+
+                          return '2024-01-01 33';
                         },
                       ),
                       charts: [
@@ -126,6 +128,13 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                             double.parse(item['value2'].toString()),
                             double.parse(item['value3'].toString()),
                           ],
+                          valuesOffsetAnchor: (size) => Offset(-(size.width - 10) / 2 - 10, 0),
+                          valueFormatter: (item) => '38',
+                          valueOffsetAnchor: (item) => Offset(0, -4),
+                          valueTextStyle: TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
