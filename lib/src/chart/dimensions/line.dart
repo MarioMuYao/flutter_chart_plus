@@ -594,7 +594,9 @@ mixin AnimalLineMixin<T> on ChartBodyRender<T> {
       for (ChartItemLayoutState shape in shapeList) {
         List<ChartItemLayoutState> children = shape.children;
         for (ChartItemLayoutState childLayoutState in children) {
-          _instance._drawValueText(canvas, state.layout as ChartDimensionCoordinateState, 'aaaa', childLayoutState);
+          List<String>? valueString = _instance.valuesFormatter?.call(data[shape.index ?? 0]);
+          _instance._drawValueText(canvas, state.layout as ChartDimensionCoordinateState,
+              valueString?[childLayoutState.index ?? 0], childLayoutState);
         }
       }
     }
