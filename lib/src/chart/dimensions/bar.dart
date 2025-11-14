@@ -221,6 +221,7 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
     this.hotColor,
     this.valuesFormatter,
     this.textStyle = const TextStyle(fontSize: 10, color: Colors.black),
+    this.textStyleBuilder,
     this.valuesOffset = Offset.zero,
     this.valuesOffsetAnchor,
     this.valueFormatter,
@@ -266,6 +267,8 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
 
   ///值文字样式
   final TextStyle textStyle;
+
+  final ChartTextStyle<T>? textStyleBuilder;
 
   ///文案偏移
   final Offset valuesOffset;
@@ -327,8 +330,6 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
 
       childrenLayoutState.add(p..index = index);
 
-      List<String>? valueString = valuesFormatter?.call(item);
-
       int stackIndex = 0;
       for (ChartItemLayoutState cp in p.children) {
         if (cp.originRect != null) {
@@ -348,9 +349,7 @@ class StackBar<T> extends ChartBodyRender<T> with BarHorizontalMinx<T>, BarVerti
           canvas.drawRect(cp.originRect!, _paint);
           //画文案
           if (layout.controlValue == 1 || !drawValueTextAfterAnimation) {
-            if (valueString != null && valueString.isNotEmpty) {
-              _drawValueText(canvas, layout, valueString[stackIndex], cp);
-            }
+            _drawValueText(canvas, layout, item, cp, stackIndex);
           }
         }
         stackIndex++;
@@ -465,14 +464,16 @@ mixin BarHorizontalMinx<T> on ChartBodyRender<T> {
     return shape;
   }
 
-  void _drawValueText(Canvas canvas, ChartDimensionCoordinateState layout, String? text, ChartItemLayoutState p) {
+  void _drawValueText(Canvas canvas, ChartDimensionCoordinateState layout, T item, ChartItemLayoutState p, int index) {
     if (_instance.direction == Axis.vertical) {
       return;
     }
+    List<String>? valueString = _instance.valuesFormatter?.call(item);
+    String? text = valueString?[index];
     if (text != null) {
       TextPainter legendTextPainter = TextPainter(
         textAlign: TextAlign.center,
-        text: TextSpan(text: text, style: _instance.textStyle),
+        text: TextSpan(text: text, style: _instance.textStyleBuilder?.call(item, index) ?? _instance.textStyle),
         textDirection: TextDirection.ltr,
       )..layout(minWidth: 0, maxWidth: layout.size.width);
       Offset offset = Offset.zero;
@@ -566,14 +567,16 @@ mixin BarVerticalBarMinx<T> on ChartBodyRender<T>, BarHorizontalMinx<T> {
   }
 
   @override
-  void _drawValueText(Canvas canvas, ChartDimensionCoordinateState layout, String? text, ChartItemLayoutState p) {
+  void _drawValueText(Canvas canvas, ChartDimensionCoordinateState layout, T item, ChartItemLayoutState p, int index) {
     if (_instance.direction == Axis.horizontal) {
-      return super._drawValueText(canvas, layout, text, p);
+      return super._drawValueText(canvas, layout, item, p, index);
     }
+    List<String>? valueString = _instance.valuesFormatter?.call(item);
+    String? text = valueString?[index];
     if (text != null && text.isNotEmpty) {
       TextPainter legendTextPainter = TextPainter(
         textAlign: TextAlign.center,
-        text: TextSpan(text: text, style: _instance.textStyle),
+        text: TextSpan(text: text, style: _instance.textStyleBuilder?.call(item, index) ?? _instance.textStyle),
         textDirection: TextDirection.ltr,
       )..layout(minWidth: 0, maxWidth: layout.size.width);
       Offset offset = Offset.zero;

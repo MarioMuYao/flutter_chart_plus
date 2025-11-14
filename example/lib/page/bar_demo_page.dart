@@ -135,6 +135,16 @@ class _BarChartDemoPageState extends State<BarChartDemoPage> {
                             color: Colors.red,
                             fontSize: 14,
                           ),
+                          textStyle: TextStyle(
+                            color: Colors.green,
+                            fontSize: 12,
+                          ),
+                          textStyleBuilder: (item, index) => index == 1
+                              ? TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 12,
+                                )
+                              : null,
                         ),
                       ],
                     ),
