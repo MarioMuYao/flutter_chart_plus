@@ -78,7 +78,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
     Size size = state.layout.size;
     int yAxisIndex = 0;
     for (YAxis yA in yAxis) {
-      Offset offset = yA.offset?.call(size) ?? Offset.zero;
+      Offset offset = yA.offset?.call(yAxisIndex, size) ?? Offset.zero;
       num max = yA.max;
       num min = yA.min;
       int count = yA.count;
@@ -213,7 +213,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
         if (text != null) {
           // bool adjustLast = (i == count);
           // bool adjustFirst = (i == 0);
-          oft = _drawXTextPaint(xAxis, canvas, text, state, point.dx, point.dy + xAxis.padding,
+          oft = _drawXTextPaint(xAxis, canvas, i, text, state, point.dx, point.dy + xAxis.padding,
               adjustFirst: false, adjustLast: false);
         }
       }
@@ -229,7 +229,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
           double left = state.layout.left + density * interval * newValue;
           left = state.layout.transform.withXScroll(left);
           if (newText != null) {
-            _drawXTextPaint(xAxis, canvas, newText, state, left, point.dy + xAxis.padding);
+            _drawXTextPaint(xAxis, canvas, j, newText, state, left, point.dy + xAxis.padding);
           }
         }
       }
@@ -281,6 +281,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
   Offset _drawXTextPaint(
     XAxis axis,
     Canvas canvas,
+    int index,
     String text,
     ChartsState state,
     double left,
@@ -310,7 +311,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
       x = left - textWidth;
     }
     double? radians = axis.radians;
-    Offset offset = Offset(x, top) + (xAxis.offsetAnchor?.call(textPainter.size) ?? Offset.zero);
+    Offset offset = Offset(x, top) + (xAxis.offsetAnchor?.call(index, textPainter.size) ?? Offset.zero);
     if (radians != null) {
       Offset pivot = textPainter.size.center(offset);
       canvas.save();
@@ -535,7 +536,7 @@ class ChartInvertDimensionsCoordinateRender extends ChartDimensionsCoordinateRen
 
   ///绘制x轴文本 ，现在x在左侧了
   @override
-  Offset _drawXTextPaint(XAxis axis, Canvas canvas, String text, ChartsState state, double left, double top,
+  Offset _drawXTextPaint(XAxis axis, Canvas canvas, int index, String text, ChartsState state, double left, double top,
       {bool adjustFirst = false, bool adjustLast = false}) {
     var textPainter = xAxis._textPainter[text];
     if (textPainter == null) {

@@ -155,7 +155,7 @@ class _LineChartScaleDemoPageState extends State<LineChartScaleDemoPage> {
                     }
                   },
                   radians: -45 * (pi / 180),
-                  offsetAnchor: (size) => Offset(0, cos(45 * (pi / 180)) * size.width / 2),
+                  offsetAnchor: (index, size) => Offset(0, cos(45 * (pi / 180)) * size.width / 2),
                 ),
                 backgroundAnnotations: [
                   RegionAnnotation(positions: [2.4, 3.3]),

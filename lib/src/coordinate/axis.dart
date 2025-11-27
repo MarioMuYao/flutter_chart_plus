@@ -1,7 +1,7 @@
 part of flutter_chart_plus;
 
 typedef AxisFormatter = String? Function(int index, num value);
-typedef AxisOffset = Offset? Function(Size size);
+typedef AxisOffset = Offset? Function(int index, Size size);
 
 ///放大时的数据
 typedef AxisDivideCountAtAmplify = int? Function(double);
@@ -66,7 +66,7 @@ class XAxis {
   ///文字颜色
   final TextStyle textStyle;
 
-  final Offset Function(Size)? offsetAnchor;
+  final Offset Function(int, Size)? offsetAnchor;
 
   ///最边上的线的颜色
   final Color lineColor;

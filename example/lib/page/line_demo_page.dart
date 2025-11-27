@@ -409,7 +409,7 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                           max: 400,
                           padding: 5,
                           drawDivider: false,
-                          offset: (size) => Offset(size.width - 70, 0),
+                          offset: (index, size) => Offset(size.width - 70, 0),
                         ),
                       ],
                       xAxis: XAxis(
