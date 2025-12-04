@@ -13,6 +13,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
     required super.charts,
     required this.yAxis,
     required this.xAxis,
+    super.annotations,
     super.backgroundAnnotations,
     super.foregroundAnnotations,
     super.minZoom,
@@ -22,6 +23,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
     super.reverse,
     super.animationDuration,
     super.tooltipBuilder,
+    super.onTap,
     super.onClickChart,
     this.crossHair = const CrossHairStyle(),
   }) : assert(yAxis.isNotEmpty);
@@ -53,6 +55,7 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
     // 给y轴切出来，超出这个范围就隐藏 这个会导致虚线绘制不出来 估注释掉
     // canvas.clipRect(Rect.fromLTWH(0, 0, margin.left, size.height));
     _drawYAxis(state, canvas);
+    _drawAnnotations(state, canvas);
     // canvas.restore();
     _clipContent(canvas, size);
     _drawXAxis(state, canvas);
@@ -169,6 +172,17 @@ class ChartDimensionsCoordinateRender extends ChartCoordinateRender {
         Offset(state.layout.margin.left + offset.dx, state.layout.size.height - state.layout.margin.bottom);
     Offset endPoint = Offset(state.layout.margin.left + offset.dx, state.layout.margin.top);
     canvas.drawLine(startPoint, endPoint, yA.linePaint);
+  }
+
+  void _drawAnnotations(ChartsState state, Canvas canvas) {
+    if (annotations != null) {
+      for (Annotation element in annotations!) {
+        if (!element.isInit) {
+          element.init(state);
+        }
+        element.draw(canvas, state);
+      }
+    }
   }
 
   ///绘制x轴

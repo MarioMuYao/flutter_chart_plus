@@ -37,9 +37,11 @@ abstract class ChartCoordinateRender {
     this.outDraw = false,
     this.reverse = false,
     this.animationDuration,
+    this.annotations,
     this.backgroundAnnotations,
     this.foregroundAnnotations,
     this.safeArea,
+    this.onTap,
     this.onClickChart,
   });
 
@@ -67,8 +69,13 @@ abstract class ChartCoordinateRender {
   ///用widget弹框来处理点击,返回PreferredSizeWidget便于边界碰撞计算，如果不在乎边界问题，可以随便设置，值越靠近真实宽高边界检测越准
   final TooltipWidgetBuilder? tooltipBuilder;
 
+  final void Function(ChartBodyRender chart, int? index)? onTap;
+
   ///点击事件
   final OnClickChart? onClickChart;
+
+  ///背景标注
+  final List<Annotation>? annotations;
 
   ///背景标注
   final List<Annotation>? backgroundAnnotations;

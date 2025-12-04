@@ -497,6 +497,7 @@ class _ChartCoreWidgetState extends State<_ChartCoreWidget> with TickerProviderS
           break;
         }
       }
+      widget.chartCoordinateRender.onTap?.call(body, layoutState.selectedIndex);
     }
 
     //点击事件

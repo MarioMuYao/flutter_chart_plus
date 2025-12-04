@@ -130,6 +130,12 @@ class _LineChartDemoPageState extends State<LineChartDemoPage> {
                   child: ChartWidget(
                     controller: controller,
                     coordinateRender: ChartDimensionsCoordinateRender(
+                      onTap: (chart, index) {
+                        print('=====$index');
+                      },
+                      annotations: [
+                        LabelAnnotation(positions: [-2, 380], text: '380', fixed: true),
+                      ],
                       foregroundAnnotations: [
                         LimitAnnotation(limit: 380),
                         LimitAnnotation(limit: 210),
