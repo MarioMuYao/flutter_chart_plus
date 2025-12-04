@@ -201,6 +201,13 @@ class YAxis {
     }
     return (value - min) * density;
   }
+
+  num getValue(double dy, [bool fixed = false]) {
+    if (fixed) {
+      return fixedDensity != 0 ? dy / fixedDensity + min : 0;
+    }
+    return density != 0 ? dy / density + min : 0;
+  }
 }
 
 ///该方法太耗性能，建议少用
